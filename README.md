@@ -1,7 +1,7 @@
 # PhoAnalysis_Susy_lowpT
 Susy physics analysis exploring phase space with low photon-pT
 
-##To run the analyzer code
+## To run the analyzer code
 It takes 4 arguments
 './analyzeLightBSM $filelist $out_filename $year $process_tag'
 $year = 2016..17..18 for background samples & 'signal' for signal processes
