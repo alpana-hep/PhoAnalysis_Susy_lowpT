@@ -1,0 +1,254 @@
+#define AnalyzeLightBSM_cxx
+#include "AnalyzeLightBSM.h"
+#include <TH2.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <string>
+#include <fstream>
+#include"TGraphErrors.h"
+#include"TGraphAsymmErrors.h"
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+
+  if (argc < 2) {
+    cerr << "Please give 3 arguments " << "runList " << " " << "outputFileName" << " " << "dataset" << endl;
+    return -1;
+  }
+  const char *inputFileList = argv[1];
+  const char *outFileName   = argv[2];
+  const char *data          = argv[3];
+
+  AnalyzeLightBSM ana(inputFileList, outFileName, data);
+  cout << "dataset " << data << " " << endl;
+
+  ana.EventLoop(data,inputFileList);
+
+  return 0;
+}
+
+void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList) {
+  if (fChain == 0) return;
+
+  Long64_t nentries = fChain->GetEntriesFast();
+  cout << "nentries " << nentries << endl;
+  cout << "Analyzing dataset " << data << " " << endl;
+  //Weight 
+  //  NumEvents = nentries;
+  //cout<<Weight<<endl;
+  //Weight = CrossSection/NumEvents;    
+  //  wt = Weight*1000.0*35.9;
+  TString s_data=data;
+  Long64_t nbytes = 0, nb = 0;
+  int decade = 0;
+
+  for (Long64_t jentry=0; jentry<10;jentry++)
+    {
+      wt = Weight*1000.0;//*59.7;
+      //           cout<<Weight<<endl;
+      // ==============print number of events done == == == == == == == =
+      double progress = 10.0 * jentry / (1.0 * nentries);
+      int k = int (progress);
+      if (k > decade)
+	cout << 10 * k << " %" << endl;
+      decade = k;
+    
+
+      // ===============read this entry == == == == == == == == == == == 
+      Long64_t ientry = LoadTree(jentry);
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);   nbytes += nb;
+      //my code starts from here .... 19Aug2020
+      int branch_size = (*GenParticles).size();
+      //      cout<<branch_size<<endl;
+      for(int i =0;i<branch_size;i++)
+	{
+	  
+	  N_all++;	  
+	  //  if((abs((*GenParticles_PdgId)[i]) == 11 || abs((*GenParticles_PdgId)[i])==13 ||abs((*GenParticles_PdgId)[i])==15) && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  // if(abs((*GenParticles_PdgId)[i]) == 11 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  //   {
+	  //     Nelectrons++;
+	  //   }
+	  // else if(abs((*GenParticles_PdgId)[i]) == 13 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  //   {
+	  //     Nmuons++;
+	  //   }
+	  // else if(abs((*GenParticles_PdgId)[i]) == 15 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==2))
+	  //   {
+	  //     Ntaus++;
+	  //   }
+	  // else if((abs((*GenParticles_PdgId)[i])==1 || abs((*GenParticles_PdgId)[i])==2 || abs((*GenParticles_PdgId)[i])==3 ||abs((*GenParticles_PdgId)[i])==4 ||abs((*GenParticles_PdgId)[i])==5) &&  abs((*GenParticles_ParentId)[i]) == 24 && (*GenParticles_Status)[i] == 23)
+	  //   {
+	  //     Nzeroleptons++;
+	  //     //cout<<Nzeroleptons<<endl;
+	  //   }
+	  // else
+	  //   continue;
+	  // //apply zero lepton(Muon and electron) cut
+	  // if(NMuons ==0 && NElectrons==0)
+	  //   {
+	  //     if(abs((*GenParticles_PdgId)[i]) == 11 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  // 	{
+	  // 	  lept_Nelectrons++;
+	  // 	}
+	  //     else if(abs((*GenParticles_PdgId)[i]) == 13 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  // 	{
+	  // 	  lept_Nmuons++;
+	  // 	}
+	  //     else if(abs((*GenParticles_PdgId)[i]) == 15 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==2))
+	  // 	{
+	  // 	  lept_Ntaus++;
+	  // 	}
+	  //     else if((abs((*GenParticles_PdgId)[i])==1 || abs((*GenParticles_PdgId)[i])==2 || abs((*GenParticles_PdgId)[i])==3 ||abs((*GenParticles_PdgId)[i])==4 ||abs((*GenParticles_PdgId)[i])==5) &&  abs((*GenParticles_ParentId)[i]) == 24 && (*GenParticles_Status)[i] == 23)
+	  // 	{
+	  // 	  lept_Nzeroleptons++;
+	  // 	}
+	  //     else
+	  // 	continue;
+	    
+
+	  //     //veto isolated Isoon tracks
+	  //     if(isoElectronTracks==0 && isoMuonTracks ==0)
+	  // 	{
+	  // 	  if(abs((*GenParticles_PdgId)[i]) == 11 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  // 	    {
+	  // 	      Iso_Nelectrons++;
+	  // 	    }
+	  // 	  else if(abs((*GenParticles_PdgId)[i]) == 13 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==1))
+	  // 	    {
+	  // 	      Iso_Nmuons++;
+	  // 	    }
+	  // 	  else if(abs((*GenParticles_PdgId)[i]) == 15 && (abs((*GenParticles_ParentId)[i])==24) && ((*GenParticles_Status)[i]==23 || (*GenParticles_Status)[i]==2))
+	  // 	    {
+	  // 	      Iso_Ntaus++;
+	  // 	    }
+	  // 	  else if((abs((*GenParticles_PdgId)[i])==1 || abs((*GenParticles_PdgId)[i])==2 || abs((*GenParticles_PdgId)[i])==3 ||abs((*GenParticles_PdgId)[i])==4 ||abs((*GenParticles_PdgId)[i])==5) &&  abs((*GenParticles_ParentId)[i]) == 24)// && (*GenParticles_Status)[i] == 23)
+	  // 	    {
+	  // 	      Iso_Nzeroleptons++;
+	  // 	    }
+	  // 	  else
+	  // 	    continue;
+
+	  // 	}
+
+	  //   }
+
+
+
+
+	}//genParticle size
+      //cout<<Nzeroleptons<<endl;
+      // if(Nelectrons == 0 && Ntaus==0 && Nmuons ==0 && Nzeroleptons ==2)
+      // 	{ h_events->Fill(0);//,wt);
+      // 	  //  cout<<"..."<<endl;
+      // 	 // h_events->SetBinContent(0,wt);
+      // 	}
+	
+      // else if (Nelectrons == 1 && Ntaus==0 && Nmuons ==0)
+      // 	{h_events->Fill(1);}
+      // else if (Nelectrons == 0 && Ntaus==1 && Nmuons ==0)
+      // 	{h_events->Fill(2);}
+      // else if (Nelectrons == 0 && Ntaus==0 && Nmuons ==1)
+      // 	{h_events->Fill(3);}
+      // else if (Nelectrons == 2 && Ntaus==0 && Nmuons ==0)
+      // 	{h_events->Fill(4);}
+      // else if (Nelectrons == 0 && Ntaus==2 && Nmuons ==0)
+      // 	{h_events->Fill(5);}
+      // else if(Nelectrons == 0 && Ntaus==0 && Nmuons ==2)
+      // 	{ h_events->Fill(6);}
+      // else if (Nelectrons == 1 && Ntaus==0 && Nmuons ==1)
+      // 	{h_events->Fill(7);}
+      // else if (Nelectrons == 1 && Ntaus== 1 && Nmuons == 0)
+      // 	{h_events->Fill(8);}
+      // else if (Nelectrons == 0 && Ntaus==1 && Nmuons ==1)
+      // 	{h_events->Fill(9);}
+   
+      // //filling histogram after zero lepton cuts
+      // if(lept_Nelectrons == 0 && lept_Ntaus==0 && lept_Nmuons ==0 && lept_Nzeroleptons ==2)
+      //   { h_zerolepton->Fill(0);}
+        
+      // else if (lept_Nelectrons == 1 && lept_Ntaus==0 && lept_Nmuons ==0)
+      //   {h_zerolepton->Fill(1);}
+      // else if (lept_Nelectrons == 0 && lept_Ntaus==1 && lept_Nmuons ==0)
+      //   {h_zerolepton->Fill(2);}
+      // else if (lept_Nelectrons == 0 && lept_Ntaus==0 && lept_Nmuons ==1)
+      //   {h_zerolepton->Fill(3);}
+      // else if (lept_Nelectrons == 2 && lept_Ntaus==0 && lept_Nmuons ==0)
+      //   {h_zerolepton->Fill(4);}
+      // else if (lept_Nelectrons == 0 && lept_Ntaus==2 && lept_Nmuons ==0)
+      //   {h_zerolepton->Fill(5);}
+      // else if(lept_Nelectrons == 0 && lept_Ntaus==0 && lept_Nmuons ==2)
+      //   { h_zerolepton->Fill(6);}
+      // else if (lept_Nelectrons == 1 && lept_Ntaus==0 && lept_Nmuons ==1)
+      //   {h_zerolepton->Fill(7);}
+      // else if (lept_Nelectrons == 1 && lept_Ntaus== 1 && lept_Nmuons == 0)
+      //   {h_zerolepton->Fill(8);}
+      // else if (lept_Nelectrons == 0 && lept_Ntaus==1 && lept_Nmuons ==1)
+      //   {h_zerolepton->Fill(9);}
+      
+      // //filling after applying isotrack cuts
+      // if(Iso_Nelectrons == 0 && Iso_Ntaus==0 && Iso_Nmuons ==0 && Iso_Nzeroleptons ==2)
+      //   { h_isotrack->Fill(0.0);}
+        
+      // else if (Iso_Nelectrons == 1 && Iso_Ntaus==0 && Iso_Nmuons ==0)
+      //   {h_isotrack->Fill(1);}
+      // else if (Iso_Nelectrons == 0 && Iso_Ntaus==1 && Iso_Nmuons ==0)
+      //   {h_isotrack->Fill(2);}
+      // else if (Iso_Nelectrons == 0 && Iso_Ntaus==0 && Iso_Nmuons ==1)
+      //   {h_isotrack->Fill(3);}
+      // else if (Iso_Nelectrons == 2 && Iso_Ntaus==0 && Iso_Nmuons ==0)
+      //   {h_isotrack->Fill(4);}
+      // else if (Iso_Nelectrons == 0 && Iso_Ntaus==2 && Iso_Nmuons ==0)
+      //   {h_isotrack->Fill(5);}
+      // else if(Iso_Nelectrons == 0 && Iso_Ntaus==0 && Iso_Nmuons ==2)
+      //   { h_isotrack->Fill(6);}
+      // else if (Iso_Nelectrons == 1 && Iso_Ntaus==0 && Iso_Nmuons ==1)
+      //   {h_isotrack->Fill(7);}
+      // else if (Iso_Nelectrons == 1 && Iso_Ntaus== 1 && Iso_Nmuons == 0)
+      //   {h_isotrack->Fill(8);}
+      // else if (Iso_Nelectrons == 0 && Iso_Ntaus==1 && Iso_Nmuons ==1)
+      //   {h_isotrack->Fill(9);}
+
+      N_all=0;
+      Nelectrons=0;
+      Nmuons=0;
+      Ntaus=0;
+      Nzeroleptons=0;
+      //N_all=0;
+      lept_Nelectrons=0;
+      lept_Nmuons=0;
+      lept_Ntaus=0;
+      lept_Nzeroleptons=0; N_all=0;
+      Iso_Nelectrons=0;
+      Iso_Nmuons=0;
+      Iso_Ntaus=0;
+      Iso_Nzeroleptons=0;
+    }   // loop over entries
+  //h_photonPt->Draw();
+  //   h_zerolepton->Write();
+  //  cout<<N_all<<endl;
+  //cout<<N_0emt<<endl;
+  //cout<<N_2e<<endl;
+}
+//#cout<<N_all<<endl;
+TLorentzVector AnalyzeLightBSM::getBestPhoton(){
+  TLorentzVector v1;
+  vector<TLorentzVector> goodPho;
+  for(int iPhoton=0;iPhoton<Photons->size();iPhoton++){
+    if( ((*Photons_fullID)[iPhoton]) && ((*Photons_hasPixelSeed)[iPhoton]<0.001) ) goodPho.push_back( (*Photons)[iPhoton]);
+  }
+
+  if(goodPho.size()==0) return v1;
+  sortTLorVec(&goodPho);
+  return goodPho[0];
+  
+}
+
+
+
