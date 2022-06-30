@@ -1,0 +1,14 @@
+executable=worker_SP.sh
+universe=vanilla
+Arguments= filelist  outfile year sample_tag
+Input =
+Output = /uscms/home/kalpana/nobackup/public/work/Susy_lowPho_analysis/CMSSW_11_1_0_pre3/src/lowPhopT_Analysis_June22/condor_jobs/condor_output/condor_logs/condor_year_sample_tag.out
+Error  = /uscms/home/kalpana/nobackup/public/work/Susy_lowPho_analysis/CMSSW_11_1_0_pre3/src/lowPhopT_Analysis_June22/condor_jobs/condor_output/condor_logs/condor_year_sample_tag.out
+Log    =/uscms/home/kalpana/nobackup/public/work/Susy_lowPho_analysis/CMSSW_11_1_0_pre3/src/lowPhopT_Analysis_June22/condor_jobs/condor_output/c\
+ondor_logs/condor_year_sample_tag.out
+notification=never
+should_transfer_files=YES
+Transfer_Input_Files = worker_SP.sh, filelist, analyzeLightBSM
+request_memory = 2.0 GB
+when_to_transfer_output = ON_EXIT
+queue
