@@ -42,6 +42,12 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
   cout << "Analyzing dataset " << data << " " << endl;
   char* outfileName = new char[1000];
   char* basedir= new char[2000];
+  sprintf(basedir,".");//root://cmseos.fnal.gov.in//store/user/kalpana/Susy_phoMet/SkimmedNtuples");
+  sprintf(outfileName,"%s/skimmed_ntuple_%s_%s.root",basedir, data,sample);
+  TFile* outfile = TFile::Open(outfileName,"recreate");
+  skim_tree = new TTree("Pre_Selection1","variables for BDT training");
+  NtupleVariables::init_piTree();
+
   TString s_data=data;
   TString s_sample= sample;
   Long64_t nbytes = 0, nb = 0; 
@@ -74,6 +80,166 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
 	cout<<"===load tree entry ==="<<endl;
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
+      //// **********************************   Initialize the branches **************************** ////
+      pre_RunNum = -1;
+      pre_LumiBlockNum = -1;
+      pre_EvtNum=-1;
+      pre_BTags =-1;
+      pre_BTagsDeepCSV = -1;
+      pre_BTagsDeepCSVJECdown = -1;
+      pre_BTagsDeepCSVJECup = -1;
+      pre_BTagsDeepCSVJERdown = -1;
+      pre_BTagsDeepCSVJERup = -1;
+      pre_BTagsJECdown = -1;
+      pre_BTagsJECup = -1;
+      pre_BTagsJERdown = -1;
+      pre_BTagsJERup =-1;
+      pre_CrossSection=-1;
+      pre_Electrons=0;
+      pre_Electrons_charge =0;
+      pre_Electrons_iso=0;
+      pre_Electrons_mediumID=0;
+      pre_Electrons_MTW=0;
+      pre_Electrons_passIso=0;
+      pre_Electrons_tightID=0;
+      pre_GenElectrons=0;
+      pre_GenJets=0;
+      pre_GenJetsAK8=0;
+      pre_GenMET=0.0;
+      pre_GenMETPhi=0.0;
+      pre_GenMHT=0.0;
+      pre_GenMHTPhi=0.0;
+      pre_GenMuons=0;
+      pre_GenParticles=0;
+      pre_GenParticles_ParentId=0;
+      pre_GenParticles_ParentIdx=0;
+      pre_GenParticles_PdgId=0;
+      pre_GenParticles_Status=0;
+      pre_GenTaus=0;
+      pre_GenTaus_had=0;
+      pre_HT=0.0;
+      pre_HT5=0.0;
+      pre_isoElectronTracks=0.0;
+      pre_isoMuonTracks = 0.0;
+      pre_isoPionTracks =0.0;
+      pre_JetID=0;
+      pre_JetIDAK8=0;
+      pre_Jets=0;
+      pre_Jets_ptD=0;
+      pre_Jets_qgLikelihood=0;
+      pre_JetsAK8=0;
+      pre_madHT=0.0;
+      pre_MET =0.0;
+      pre_METDown=0;
+      pre_METPhi=0.0;
+      pre_MHT=0.0;
+      pre_MHTPhi =0.0;
+      pre_MT_AK8=0.0;
+      pre_Muons=0;
+      pre_Muons_charge=0;
+      pre_Muons_iso=0;
+      pre_Muons_mediumID=0;
+      pre_Muons_MTW=0;
+      pre_Muons_passIso=0;
+      pre_Muons_tightID=0;
+      pre_nAllVertices=-1;
+      pre_NElectrons=-1;
+      pre_NJets=-1;
+      pre_NJetsISR=-1;
+      pre_NJetsISRJECdown=-1;
+      pre_NJetsISRJECup=-1;
+      pre_NJetsISRJERdown=-1;
+      pre_NJetsISRJERup=-1;
+      pre_NJetsJECdown=-1;
+      pre_NJetsJECup=-1;
+      pre_NJetsJERdown=-1;
+      pre_NJetsJERup=-1;
+      pre_NMuons=-1;
+      pre_NonPrefiringProb=0.0;
+      pre_NonPrefiringProbDown=0.0;
+      pre_NonPrefiringProbUp=0.0;
+      pre_NumEvents=0.0;
+      pre_NumInteractions=-1;
+      pre_NVtx=-1;
+      pre_PDFweights=0;
+      pre_PFCaloMETRatio=0.0;
+      pre_Photons=0;
+      pre_Photons_electronFakes=0;
+      pre_Photons_fullID=0;
+      pre_Photons_genMatched=0;
+      pre_Photons_hadTowOverEM=0;
+      pre_Photons_hasPixelSeed=0;
+      pre_Photons_isEB=0;
+      pre_Photons_nonPrompt=0;
+      pre_Photons_passElectronVeto=0;
+      pre_Photons_pfChargedIso=0;
+      pre_Photons_pfChargedIsoRhoCorr=0;
+      pre_Photons_pfGammaIso=0;
+      pre_Photons_pfGammaIsoRhoCorr=0;
+      pre_Photons_pfNeutralIso=0;
+      pre_Photons_pfNeutralIsoRhoCorr=0;
+      pre_Photons_sigmaIetaIeta=0;
+      pre_PrimaryVertexFilter=-1;
+      pre_PSweights=0;
+      pre_puSysDown=0.0;
+      pre_puSysUp=0.0;
+      pre_puWeight=0.0;
+      pre_ScaleWeights=0;
+      pre_SignalParameters=0;
+      pre_SusyLSPMass=0.0;
+      pre_SusyMotherMass=0.0;
+      pre_TAPElectronTracks=0;
+      pre_TAPElectronTracks_dxypv=0;
+      pre_TAPElectronTracks_leptonMatch=0;
+      pre_TAPElectronTracks_mT=0;
+      pre_TAPElectronTracks_pfRelIso03chg=0;
+      pre_TAPElectronTracks_trkiso=0;
+      pre_TAPMuonTracks=0;
+      pre_TAPMuonTracks_dxypv=0;
+      pre_TAPMuonTracks_leptonMatch=0;
+      pre_TAPMuonTracks_mT=0;
+      pre_TAPMuonTracks_pfRelIso03chg=0;
+      pre_TAPElectronTracks_trkiso=0;
+      pre_TAPMuonTracks=0;
+      pre_TAPMuonTracks_dxypv=0;
+      pre_TAPMuonTracks_leptonMatch=0;
+      pre_TAPMuonTracks_mT=0;
+      pre_TAPMuonTracks_pfRelIso03chg=0;
+      pre_TAPMuonTracks_trkiso=0;
+      pre_TAPPionTracks=0;
+      pre_TAPPionTracks_dxypv=0;
+      pre_TAPPionTracks_leptonMatch=0;
+      pre_TAPMuonTracks_mT=0;
+      pre_TAPMuonTracks_pfRelIso03chg=0;
+      pre_TAPMuonTracks_trkiso=0;
+      pre_TAPPionTracks=0;
+      pre_TAPPionTracks_dxypv=0;
+      pre_TAPPionTracks_leptonMatch=0;
+      pre_TAPPionTracks_mT=0;
+      pre_TAPPionTracks_pfRelIso03chg=0;
+      pre_TAPPionTracks_trkiso=0;
+      pre_TriggerPass=0;
+      pre_TriggerPrescales=0;
+      pre_TriggerVersion=0;
+      pre_TrueNumInteractions=0.0;
+      pre_Weight=0.0;
+      pre_ZCandidates=0;
+      pre_NhadJets = -1;
+      pre_Nphotons = -1;
+      pre_BestPhoton=0;//.clear();                                                                                                                                                                                 
+      pre_hadJets=0;//ar();                                                                                                                                                                                        
+      pre_ST=0.0;
+      pre_HtSum=0.0;
+      pre_mTPhoMET_=0.0;
+      pre_dPhi_PhoMET_ =0.0;
+      pre_evtwt= 0.0;
+
+      pre_dPhi_Met_Jet=0.0;
+      pre_dPhi_Jet_pho=0.0;
+      pre_eta_jet_pho=0.0;
+      pre_eta_jet_met=0.0;
+      pre_eta_met_pho=0.0;
+
 
       // ==========================================================================================\\
       // ====================================== Calculating weight per event ======================\\
@@ -226,7 +392,7 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
                 if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5)) continue;
               }
           }
-        if(s_sample.Contains("TTJets-HT") || s_sample.Contains("TTJets-inc") || s_sample.Contains("TTJets2_v17"))
+        if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets_inc") || s_sample.Contains("TTJets2_v17"))
           {
             if(!hasGenPromptPhoton)
               {
@@ -327,9 +493,15 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     
     TLorentzVector Met;
     Met.SetPtEtaPhiE(MET,0,METPhi,0);
+    Double_t deta_jet_pho= 0.0,deta_jet_met=0.0,deta_met_pho=0.0;
+    deta_jet_pho = abs(bestPhoton.Eta()-hadJets[0].Eta());
+
     double mT= 0.0, dPhi_METjet1=5, dPhi_METjet2=5, dPhi_phojet1=5, dPhi_phojet2=5, dPhi_phoMET=5;
     if(hadJets.size() > 0) dPhi_phojet1 = abs(bestPhoton.DeltaPhi(hadJets[0]));
     if(hadJets.size() > 1) dPhi_phojet2 = abs(bestPhoton.DeltaPhi(hadJets[1]));
+    dPhi_phojet2 = abs(bestPhoton.DeltaPhi(hadJets[1]));
+    dPhi_phoMET = abs(bestPhoton.DeltaPhi(Met));
+
     dPhi_METjet1 = abs(Met.DeltaPhi(hadJets[0]));
     dPhi_METjet2 = abs(Met.DeltaPhi(hadJets[1]));
     dPhi_phoMET = abs(bestPhoton.DeltaPhi(Met));
@@ -406,9 +578,9 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     if (k > decade)
       cout << 10 * k << " %-5" << endl;
 
-    if (MET>250)
-      h_selectBaselineYields_->Fill("MET>250",wt);
-    else continue;
+    // if (MET>250)
+    //   h_selectBaselineYields_->Fill("MET>250",wt);
+    // else continue;
     h_selectBaselineYields_->Fill("Final",wt);
     h_Njets[9]->Fill(nHadJets,wt);
     h_Nbjets[9]->Fill(BTags,wt);
@@ -437,14 +609,75 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     h_Sbins_v6_withOnlyBL_Selec_PrevAna->Fill(Sbin_prev,wt);    
     if(Debug)
       cout<<"filling the branches in tree"<<endl;
+
+    pre_RunNum = RunNum;
+    pre_LumiBlockNum = LumiBlockNum;
+    pre_EvtNum=EvtNum;
+    pre_BTags =BTags;
+    pre_BTagsDeepCSV = BTagsDeepCSV;
+    pre_BTagsDeepCSVJECdown = BTagsDeepCSVJECdown;
+    pre_BTagsDeepCSVJECup = BTagsDeepCSVJECup;
+    pre_BTagsDeepCSVJERdown = BTagsDeepCSVJERdown;
+    pre_BTagsDeepCSVJERup = BTagsDeepCSVJERup;
+    pre_BTagsJECdown = BTagsJECdown;
+    pre_BTagsJECup = BTagsJECup;
+    pre_BTagsJERdown = BTagsJERdown;
+    pre_BTagsJERup =BTagsJERup;
+    pre_CrossSection=CrossSection;
+    pre_Electrons=Electrons;
+    pre_Electrons_charge=Electrons_charge;
+    pre_Electrons_iso=Electrons_iso;
+    pre_Electrons_mediumID=Electrons_mediumID;
+    pre_Electrons_MTW=Electrons_MTW;
+    pre_Electrons_passIso=Electrons_passIso;
+    pre_Electrons_tightID=Electrons_tightID;
+    pre_GenElectrons=GenElectrons;
+    pre_GenMET=GenMET;
+    pre_GenMETPhi=GenMETPhi;
+    pre_GenMHT=GenMHT;
+    pre_GenMHTPhi=GenMHTPhi;
+    pre_GenMuons=GenMuons;
+    pre_GenParticles_ParentId=GenParticles_ParentId;
+    pre_GenParticles_ParentIdx=GenParticles_ParentIdx;
+    pre_GenParticles_PdgId=GenParticles_PdgId;
+    pre_GenParticles_Status=GenParticles_Status;
+    pre_GenTaus=GenTaus;
+    pre_GenTaus_had=GenTaus_had;
+    pre_HT=HT;
+    pre_isoElectronTracks=isoElectronTracks;
+    pre_isoMuonTracks = isoMuonTracks;
+    pre_isoPionTracks =isoPionTracks;
+    pre_MET = MET;
+    pre_MHT=MHT;
+    pre_NJets=NJets;
+    pre_NhadJets = nHadJets;
+    pre_Nphotons = 1;
+    if(Debug)
+      cout<<"filling the branches in tree:part2"<<endl;
+    if(Debug)
+      cout<<"filling the branches in tree:part2"<<endl;
+    pre_ST=ST;
+    pre_HtSum=HT;
+    pre_mTPhoMET_ =mTPhoMET;
+    pre_dPhi_PhoMET_ =dPhi_PhoMET;
+    pre_evtwt= wt;
+    pre_dPhi_Met_Jet=dPhi_METjet1;
+    pre_dPhi_Jet_pho=dPhi_phojet1;
+    pre_eta_jet_pho=deta_jet_pho;
+    pre_eta_jet_met=deta_jet_met;
+    pre_eta_met_pho=deta_met_pho;
+
+
+    skim_tree->Fill();
+
     if (k > decade)
       cout<<"endl"<<endl;
     }//loop over entries
   cout<<nocut<<"\t"<<nSurvived<<"\t"<<bkg_comp<<endl;
-  // outfile->cd();
-  // skim_tree->Write();
-  // outfile->Close();
-  // cout<<"outFile: "<<outfileName<<" written!!"<<endl;
+  outfile->cd();
+  skim_tree->Write();
+  outfile->Close();
+  cout<<"outFile: "<<outfileName<<" written!!"<<endl;
 
  
 }

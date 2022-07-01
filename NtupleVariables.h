@@ -26,6 +26,315 @@ class NtupleVariables : public TSelector {
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
 
+// Fixed size dimensions of array or collections stored in the TTree if any.
+
+   // Declaration of leaf types
+   TTree* skim_tree;
+   UInt_t                       pre_RunNum;
+   UInt_t                       pre_LumiBlockNum;
+   ULong64_t                    pre_EvtNum;
+   /* Bool_t                       pre_BadChargedCandidateFilter; */
+   /* Bool_t                       pre_BadPFMuonFilter; */
+   Int_t                       pre_BTags;
+   Int_t                       pre_BTagsDeepCSV;
+   Int_t                       pre_BTagsDeepCSVJECdown;
+   Int_t                       pre_BTagsDeepCSVJECup;
+   Int_t                       pre_BTagsDeepCSVJERdown;
+   Int_t                       pre_BTagsDeepCSVJERup;
+   Int_t                       pre_BTagsJECdown;
+   Int_t                       pre_BTagsJECup;
+   Int_t                       pre_BTagsJERdown;
+   Int_t                       pre_BTagsJERup;
+   /* Double_t                       pre_CaloMET; */
+   /* Double_t                       pre_CaloMETPhi; */
+   Double_t                       pre_CrossSection;
+   /* Int_t                       pre_CSCTightHaloFilter; */
+   /* Int_t                       pre_ecalBadCalibFilter; */
+   /* Bool_t                       pre_ecalBadCalibReducedExtraFilter; */
+   /* Bool_t                       pre_ecalBadCalibReducedFilter; */
+   /* Int_t                       pre_EcalDeadCellBoundaryEnergyFilter; */
+   /* Int_t                       pre_EcalDeadCellTriggerPrimitiveFilter; */
+   /* Int_t                       pre_eeBadScFilter; */
+   vector<TLorentzVector> *pre_Electrons;
+   vector<int>     *pre_Electrons_charge;
+   vector<double>  *pre_Electrons_iso;
+   vector<bool>    *pre_Electrons_mediumID;
+   vector<double>  *pre_Electrons_MTW;
+   vector<bool>    *pre_Electrons_passIso;
+   vector<bool>    *pre_Electrons_tightID;
+   /* Double_t                       pre_fixedGridRhoFastjetAll; */
+   vector<TLorentzVector> *pre_GenElectrons;
+   Double_t                       pre_GenHT;
+   vector<TLorentzVector> *pre_GenJets;
+   vector<TLorentzVector> *pre_GenJetsAK8;
+   /* vector<int>     *pre_GenJetsAK8_multiplicity; */
+   /* vector<double>  *pre_GenJetsAK8_softDropMass; */
+   Double_t                       pre_GenMET;
+   Double_t                       pre_GenMETPhi;
+   Double_t                       pre_GenMHT;
+   Double_t                       pre_GenMHTPhi;
+   vector<TLorentzVector> *pre_GenMuons;
+   vector<TLorentzVector> *pre_GenParticles;
+   vector<int>     *pre_GenParticles_ParentId;
+   vector<int>     *pre_GenParticles_ParentIdx;
+   vector<int>     *pre_GenParticles_PdgId;
+   vector<int>     *pre_GenParticles_Status;
+   vector<TLorentzVector> *pre_GenTaus;
+   vector<bool>    *pre_GenTaus_had;
+   /* Int_t                       pre_globalSuperTightHalo2016Filter; */
+   /* Int_t                       pre_globalTightHalo2016Filter; */
+   /* Bool_t                       pre_hasGenPromptPhoton; */
+   /* Int_t                       pre_HBHEIsoNoiseFilter; */
+   /* Int_t                       pre_HBHENoiseFilter; */
+   Double_t                       pre_HT;
+   Double_t                       pre_HT5;
+   /* Double_t                       pre_HT5JECdown; */
+   /* Double_t                       pre_HT5JECup; */
+   /* Double_t                       pre_HT5JERdown; */
+   /* Double_t                       pre_HT5JERup; */
+   /* Double_t                       pre_HTJECdown; */
+   /* Double_t                       pre_HTJECup; */
+   /* Double_t                       pre_HTJERdown; */
+   /* Double_t                       pre_HTJERup; */
+   Int_t                       pre_isoElectronTracks;
+   Int_t                       pre_isoMuonTracks;
+   Int_t                       pre_isoPionTracks;
+   Bool_t                       pre_JetID;
+   Bool_t                       pre_JetIDAK8;
+   /* Bool_t                       pre_JetIDAK8JECdown; */
+   /* Bool_t                       pre_JetIDAK8JECup; */
+   /* Bool_t                       pre_JetIDAK8JERdown; */
+   /* Bool_t                       pre_JetIDAK8JERup; */
+   /* Bool_t                       pre_JetIDJECdown; */
+   /* Bool_t                       pre_JetIDJECup; */
+   /* Bool_t                       pre_JetIDJERdown; */
+   /* Bool_t                       pre_JetIDJERup; */
+   vector<TLorentzVector> *pre_Jets;
+   /* vector<double>  *pre_Jets_axismajor; */
+   /* vector<double>  *pre_Jets_axisminor; */
+   /* vector<double>  *pre_Jets_bDiscriminatorCSV; */
+   /* vector<double>  *pre_Jets_bJetTagDeepCSVBvsAll; */
+   /* vector<double>  *pre_Jets_chargedEmEnergyFraction; */
+   /* vector<double>  *pre_Jets_chargedHadronEnergyFraction; */
+   /* vector<int>     *pre_Jets_chargedHadronMultiplicity; */
+   /* vector<int>     *pre_Jets_chargedMultiplicity; */
+   /* vector<double>  *pre_Jets_electronEnergyFraction; */
+   /* vector<int>     *pre_Jets_electronMultiplicity; */
+   /* vector<int>     *pre_Jets_hadronFlavor; */
+   /* vector<double>  *pre_Jets_hfEMEnergyFraction; */
+   /* vector<double>  *pre_Jets_hfHadronEnergyFraction; */
+   /* vector<bool>    *pre_Jets_HTMask; */
+   /* vector<bool>    *pre_Jets_ID; */
+   /* vector<double>  *pre_Jets_jecFactor; */
+   /* vector<double>  *pre_Jets_jecUnc; */
+   /* vector<double>  *pre_Jets_jerFactor; */
+   /* vector<double>  *pre_Jets_jerFactorDown; */
+   /* vector<double>  *pre_Jets_jerFactorUp; */
+   /* vector<bool>    *pre_Jets_LeptonMask; */
+   /* vector<bool>    *pre_Jets_MHTMask; */
+   /* vector<int>     *pre_Jets_multiplicity; */
+   /* vector<double>  *pre_Jets_muonEnergyFraction; */
+   /* vector<int>     *pre_Jets_muonMultiplicity; */
+   /* vector<double>  *pre_Jets_neutralEmEnergyFraction; */
+   /* vector<double>  *pre_Jets_neutralHadronEnergyFraction; */
+   /* vector<int>     *pre_Jets_neutralHadronMultiplicity; */
+   /* vector<int>     *pre_Jets_neutralMultiplicity; */
+   /* vector<int>     *pre_Jets_origIndex; */
+   /* vector<int>     *pre_Jets_partonFlavor; */
+   /* vector<double>  *pre_Jets_photonEnergyFraction; */
+   /* vector<int>     *pre_Jets_photonMultiplicity; */
+   vector<double>  *pre_Jets_ptD;
+   vector<double>  *pre_Jets_qgLikelihood;
+   vector<TLorentzVector> *pre_JetsAK8;
+   /* vector<double>  *pre_JetsAK8_axismajor; */
+   /* vector<double>  *pre_JetsAK8_axisminor; */
+   /* vector<double>  *pre_JetsAK8_chargedEmEnergyFraction; */
+   /* vector<double>  *pre_JetsAK8_chargedHadronEnergyFraction; */
+   /* vector<int>     *pre_JetsAK8_chargedHadronMultiplicity; */
+   /* vector<int>     *pre_JetsAK8_chargedMultiplicity; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagbbvsLight; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagHbbvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagTvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagWvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagZbbvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagZHbbvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepMassDecorrelTagZvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepTagHbbvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepTagTvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepTagWvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepTagZbbvsQCD; */
+   /* vector<double>  *pre_JetsAK8_DeepTagZvsQCD; */
+   /* vector<double>  *pre_JetsAK8_doubleBDiscriminator; */
+   /* vector<double>  *pre_JetsAK8_ecfN2b1; */
+   /* vector<double>  *pre_JetsAK8_ecfN2b2; */
+   /* vector<double>  *pre_JetsAK8_ecfN3b1; */
+   /* vector<double>  *pre_JetsAK8_ecfN3b2; */
+   /* vector<double>  *pre_JetsAK8_electronEnergyFraction; */
+   /* vector<int>     *pre_JetsAK8_electronMultiplicity; */
+   /* vector<double>  *pre_JetsAK8_girth; */
+   /* vector<double>  *pre_JetsAK8_hfEMEnergyFraction; */
+   /* vector<double>  *pre_JetsAK8_hfHadronEnergyFraction; */
+   /* vector<bool>    *pre_JetsAK8_ID; */
+   /* vector<bool>    *pre_JetsAK8_isHV; */
+   /* vector<double>  *pre_JetsAK8_jecFactor; */
+   /* vector<double>  *pre_JetsAK8_jecUnc; */
+   /* vector<double>  *pre_JetsAK8_jerFactor; */
+   /* vector<double>  *pre_JetsAK8_jerFactorDown; */
+   /* vector<double>  *pre_JetsAK8_jerFactorUp; */
+   /* vector<int>     *pre_JetsAK8_multiplicity; */
+   /* vector<double>  *pre_JetsAK8_muonEnergyFraction; */
+   /* vector<int>     *pre_JetsAK8_muonMultiplicity; */
+   /* vector<double>  *pre_JetsAK8_neutralEmEnergyFraction; */
+   /* vector<double>  *pre_JetsAK8_neutralHadronEnergyFraction; */
+   /* vector<double>  *pre_JetsAK8_neutralHadronMultiplicity; */
+   /* vector<double>  *pre_JetsAK8_neutralMultiplicity; */
+   /* vector<double>  *pre_JetsAK8_NsubjettinessTau1; */
+   /* vector<double>  *pre_JetsAK8_NsubjettinessTau2; */
+   /* vector<double>  *pre_JetsAK8_NsubjettinessTau3; */
+   /* vector<int>     *pre_JetsAK8_NumBhadrons; */
+   /* vector<int>     *pre_JetsAK8_NumChadrons; */
+   /* vector<int>     *pre_JetsAK8_origIndex; */
+   /* vector<double>  *pre_JetsAK8_pfMassIndependentDeepDoubleBvLJetTagsProbHbb; */
+   /* vector<double>  *pre_JetsAK8_photonEnergyFraction; */
+   /* vector<double>  *pre_JetsAK8_photonMultiplicity; */
+   /* vector<double>  *pre_JetsAK8_ptD; */
+   /* vector<double>  *pre_JetsAK8_softDropMass; */
+   /* vector<vector<TLorentzVector> > *pre_JetsAK8_subjets; */
+   /* vector<vector<double> > *pre_JetsAK8_subjets_axismajor; */
+   /* vector<vector<double> > *pre_JetsAK8_subjets_axisminor; */
+   /* vector<vector<double> > *pre_JetsAK8_subjets_bDiscriminatorCSV; */
+   /* vector<vector<double> > *pre_JetsAK8_subjets_jecFactor; */
+   /* vector<vector<int> > *pre_JetsAK8_subjets_multiplicity; */
+   /* vector<vector<double> > *pre_JetsAK8_subjets_ptD; */
+   /* vector<double>  *pre_JetsAK8JECdown_jerFactor; */
+   /* vector<int>     *pre_JetsAK8JECdown_origIndex; */
+   /* vector<double>  *pre_JetsAK8JECup_jerFactor; */
+   /* vector<int>     *pre_JetsAK8JECup_origIndex; */
+   /* vector<int>     *pre_JetsAK8JERdown_origIndex; */
+   /* vector<int>     *pre_JetsAK8JERup_origIndex; */
+   /* vector<double>  *pre_JetsJECdown_jerFactor; */
+   /* vector<int>     *pre_JetsJECdown_origIndex; */
+   /* vector<double>  *pre_JetsJECup_jerFactor; */
+   /* vector<int>     *pre_JetsJECup_origIndex; */
+   /* vector<int>     *pre_JetsJERdown_origIndex; */
+   /* vector<int>     *pre_JetsJERup_origIndex; */
+   Double_t                       pre_madHT;
+   /* Int_t                       pre_madMinDeltaRStatus; */
+   /* Double_t                       pre_madMinPhotonDeltaR; */
+   Double_t                       pre_MET;
+   vector<double>  *pre_METDown;
+   Double_t                       pre_METPhi;
+   /* vector<double>  *pre_METPhiDown; */
+   /* vector<double>  *pre_METPhiUp; */
+   /* Double_t                       pre_METSignificance; */
+   /* vector<double>  *pre_METUp; */
+   Double_t                       pre_MHT;
+   /* Double_t                       pre_MHTJECdown; */
+   /* Double_t                       pre_MHTJECup; */
+   /* Double_t                       pre_MHTJERdown; */
+   /* Double_t                       pre_MHTJERup; */
+   Double_t                       pre_MHTPhi;
+   /* Double_t                       pre_MHTPhiJECdown; */
+   /* Double_t                       pre_MHTPhiJECup; */
+   /* Double_t                       pre_MHTPhiJERdown; */
+   /* Double_t                       pre_MHTPhiJERup; */
+   /* Double_t                       pre_MJJ_AK8; */
+   /* Double_t                       pre_Mmc_AK8; */
+   Double_t                       pre_MT_AK8;
+   vector<TLorentzVector> *pre_Muons;
+   vector<int>     *pre_Muons_charge;
+   vector<double>  *pre_Muons_iso;
+   vector<bool>    *pre_Muons_mediumID;
+   vector<double>  *pre_Muons_MTW;
+   vector<bool>    *pre_Muons_passIso;
+   vector<bool>    *pre_Muons_tightID;
+   Int_t                       pre_nAllVertices;
+   Int_t                       pre_NElectrons;
+   Int_t                       pre_NJets;
+   Int_t                       pre_NJetsISR;
+   Int_t                       pre_NJetsISRJECdown;
+   Int_t                       pre_NJetsISRJECup;
+   Int_t                       pre_NJetsISRJERdown;
+   Int_t                       pre_NJetsISRJERup;
+   Int_t                       pre_NJetsJECdown;
+   Int_t                       pre_NJetsJECup;
+   Int_t                       pre_NJetsJERdown;
+   Int_t                       pre_NJetsJERup;
+   Int_t                       pre_NMuons;
+   Double_t                       pre_NonPrefiringProb;
+   Double_t                       pre_NonPrefiringProbDown;
+   Double_t                       pre_NonPrefiringProbUp;
+   Double_t                       pre_NumEvents;
+   Int_t                       pre_NumInteractions;
+   Int_t                       pre_NVtx;
+   vector<float>   *pre_PDFweights;
+   Double_t                       pre_PFCaloMETRatio;
+   vector<TLorentzVector> *pre_Photons;
+   vector<bool>    *pre_Photons_electronFakes;
+   vector<bool>    *pre_Photons_fullID;
+   vector<double>  *pre_Photons_genMatched;
+   vector<double>  *pre_Photons_hadTowOverEM;
+   vector<bool>    *pre_Photons_hasPixelSeed;
+   vector<double>  *pre_Photons_isEB;
+   vector<bool>    *pre_Photons_nonPrompt;
+   vector<double>  *pre_Photons_passElectronVeto;
+   vector<double>  *pre_Photons_pfChargedIso;
+   vector<double>  *pre_Photons_pfChargedIsoRhoCorr;
+   vector<double>  *pre_Photons_pfGammaIso;
+   vector<double>  *pre_Photons_pfGammaIsoRhoCorr;
+   vector<double>  *pre_Photons_pfNeutralIso;
+   vector<double>  *pre_Photons_pfNeutralIsoRhoCorr;
+   vector<double>  *pre_Photons_sigmaIetaIeta;
+   Int_t                       pre_PrimaryVertexFilter;
+   vector<float>   *pre_PSweights;
+   Double_t                       pre_puSysDown;
+   Double_t                       pre_puSysUp;
+   Double_t                       pre_puWeight;
+   vector<float>   *pre_ScaleWeights;
+   vector<double>  *pre_SignalParameters;
+   Double_t                       pre_SusyLSPMass;
+   Double_t                       pre_SusyMotherMass;
+   vector<TLorentzVector> *pre_TAPElectronTracks;
+   vector<double>  *pre_TAPElectronTracks_dxypv;
+   vector<bool>    *pre_TAPElectronTracks_leptonMatch;
+   vector<double>  *pre_TAPElectronTracks_mT;
+   vector<double>  *pre_TAPElectronTracks_pfRelIso03chg;
+   vector<double>  *pre_TAPElectronTracks_trkiso;
+   vector<TLorentzVector> *pre_TAPMuonTracks;
+   vector<double>  *pre_TAPMuonTracks_dxypv;
+   vector<bool>    *pre_TAPMuonTracks_leptonMatch;
+   vector<double>  *pre_TAPMuonTracks_mT;
+   vector<double>  *pre_TAPMuonTracks_pfRelIso03chg;
+   vector<double>  *pre_TAPMuonTracks_trkiso;
+   vector<TLorentzVector> *pre_TAPPionTracks;
+   vector<double>  *pre_TAPPionTracks_dxypv;
+   vector<bool>    *pre_TAPPionTracks_leptonMatch;
+   vector<double>  *pre_TAPPionTracks_mT;
+   vector<double>  *pre_TAPPionTracks_pfRelIso03chg;
+   vector<double>  *pre_TAPPionTracks_trkiso;
+   vector<int>     *pre_TriggerPass;
+   vector<int>     *pre_TriggerPrescales;
+   vector<int>     *pre_TriggerVersion;
+   Double_t                       pre_TrueNumInteractions;
+   Double_t                       pre_Weight;
+   vector<TLorentzVector> *pre_ZCandidates;
+   //additonal branches added by Alpana - 01Feb 2022
+   Int_t pre_NhadJets;
+   Int_t pre_Nphotons;
+   vector<TLorentzVector> *pre_BestPhoton;
+   vector<TLorentzVector> *pre_hadJets;
+   Double_t pre_ST;
+   Double_t pre_HtSum;
+   Double_t pre_mTPhoMET_;
+   Double_t pre_dPhi_PhoMET_;
+   Double_t pre_evtwt;
+   Double_t pre_dPhi_Met_Jet;
+   Double_t pre_dPhi_Jet_pho;
+   Double_t pre_eta_jet_pho;
+   Double_t pre_eta_jet_met;
+   Double_t pre_eta_met_pho;
+   void init_piTree();
+
    // branches saved in the tree
    UInt_t          RunNum;
    UInt_t          LumiBlockNum;
@@ -1127,6 +1436,314 @@ void NtupleVariables::Init(TTree *tree, string nameData)
    fChain->SetBranchAddress("Weight", &Weight, &b_Weight);
    fChain->SetBranchAddress("ZCandidates", &ZCandidates, &b_ZCandidates);
    Notify();
+}
+void NtupleVariables::init_piTree(){
+
+  skim_tree->Branch("RunNum", &pre_RunNum);
+  skim_tree->Branch("LumiBlockNum", &pre_LumiBlockNum);
+  skim_tree->Branch("EvtNum", &pre_EvtNum);
+  /* skim_tree->Branch("BadChargedCandidateFilter", &pre_BadChargedCandidateFilter); */
+  /* skim_tree->Branch("BadPFMuonFilter", &pre_BadPFMuonFilter); */
+  skim_tree->Branch("BTags", &pre_BTags);
+  /* skim_tree->Branch("BTagsDeepCSV", &pre_BTagsDeepCSV); */
+  /* skim_tree->Branch("BTagsDeepCSVJECdown", &pre_BTagsDeepCSVJECdown); */
+  /* skim_tree->Branch("BTagsDeepCSVJECup", &pre_BTagsDeepCSVJECup); */
+  /* skim_tree->Branch("BTagsDeepCSVJERdown", &pre_BTagsDeepCSVJERdown); */
+  /* skim_tree->Branch("BTagsDeepCSVJERup", &pre_BTagsDeepCSVJERup); */
+  /* skim_tree->Branch("BTagsJECdown", &pre_BTagsJECdown); */
+  /* skim_tree->Branch("BTagsJECup", &pre_BTagsJECup); */
+  /* skim_tree->Branch("BTagsJERdown", &pre_BTagsJERdown); */
+  /* skim_tree->Branch("BTagsJERup", &pre_BTagsJERup); */
+  /* //skim_tree->Branch("CaloMET", &pre_CaloMET); */
+  /* //  skim_tree->Branch("CaloMETPhi", &pre_CaloMETPhi); */
+  /* skim_tree->Branch("CrossSection", &pre_CrossSection); */
+  /* /\* skim_tree->Branch("CSCTightHaloFilter", &pre_CSCTightHaloFilter); *\/ */
+  /* /\* skim_tree->Branch("ecalBadCalibFilter", &pre_ecalBadCalibFilter); *\/ */
+  /* /\* skim_tree->Branch("ecalBadCalibReducedExtraFilter", &pre_ecalBadCalibReducedExtraFilter); *\/ */
+  /* /\* skim_tree->Branch("ecalBadCalibReducedFilter", &pre_ecalBadCalibReducedFilter); *\/ */
+  /* /\* skim_tree->Branch("EcalDeadCellBoundaryEnergyFilter", &pre_EcalDeadCellBoundaryEnergyFilter); *\/ */
+  /* /\* skim_tree->Branch("EcalDeadCellTriggerPrimitiveFilter", &pre_EcalDeadCellTriggerPrimitiveFilter); *\/ */
+  /* /\* skim_tree->Branch("eeBadScFilter", &pre_eeBadScFilter); *\/ */
+  /* skim_tree->Branch("Electrons", &pre_Electrons); */
+  /* skim_tree->Branch("Electrons_charge", &pre_Electrons_charge); */
+  /* skim_tree->Branch("Electrons_iso", &pre_Electrons_iso); */
+  /* skim_tree->Branch("Electrons_mediumID", &pre_Electrons_mediumID); */
+  /* skim_tree->Branch("Electrons_MTW", &pre_Electrons_MTW); */
+  /* skim_tree->Branch("Electrons_passIso", &pre_Electrons_passIso); */
+  /* skim_tree->Branch("Electrons_tightID", &pre_Electrons_tightID); */
+  /* /\* skim_tree->Branch("fixedGridRhoFastjetAll", &pre_fixedGridRhoFastjetAll); *\/ */
+  /* skim_tree->Branch("GenElectrons", &pre_GenElectrons); */
+  /* skim_tree->Branch("GenHT", &pre_GenHT); */
+  /* skim_tree->Branch("GenJets", &pre_GenJets); */
+  /* skim_tree->Branch("GenJetsAK8", &pre_GenJetsAK8); */
+  /* /\* skim_tree->Branch("GenJetsAK8_multiplicity", &pre_GenJetsAK8_multiplicity); *\/ */
+  /* /\* skim_tree->Branch("GenJetsAK8_softDropMass", &pre_GenJetsAK8_softDropMass); *\/ */
+  /* skim_tree->Branch("GenMET", &pre_GenMET); */
+  /* skim_tree->Branch("GenMETPhi", &pre_GenMETPhi); */
+  /* skim_tree->Branch("GenMHT", &pre_GenMHT); */
+  /* skim_tree->Branch("GenMHTPhi", &pre_GenMHTPhi); */
+  /* skim_tree->Branch("GenMuons", &pre_GenMuons); */
+  /* skim_tree->Branch("GenParticles", &pre_GenParticles); */
+  /* skim_tree->Branch("GenParticles_ParentId", &pre_GenParticles_ParentId); */
+  /* skim_tree->Branch("GenParticles_ParentIdx", &pre_GenParticles_ParentIdx); */
+  /* skim_tree->Branch("GenParticles_PdgId", &pre_GenParticles_PdgId); */
+  /* skim_tree->Branch("GenParticles_Status", &pre_GenParticles_Status); */
+  /* skim_tree->Branch("GenTaus", &pre_GenTaus); */
+  /* skim_tree->Branch("GenTaus_had", &pre_GenTaus_had); */
+  /* /\* skim_tree->Branch("globalSuperTightHalo2016Filter", &pre_globalSuperTightHalo2016Filter); *\/ */
+  /* /\* skim_tree->Branch("globalTightHalo2016Filter", &pre_globalTightHalo2016Filter); *\/ */
+  /* /\* skim_tree->Branch("hasGenPromptPhoton", &pre_hasGenPromptPhoton); *\/ */
+  /* /\* skim_tree->Branch("HBHEIsoNoiseFilter", &pre_HBHEIsoNoiseFilter); *\/ */
+  /* /\* skim_tree->Branch("HBHENoiseFilter", &pre_HBHENoiseFilter); *\/ */
+  skim_tree->Branch("HT", &pre_HT);
+  //  skim_tree->Branch("HT5", &pre_HT5);
+  /* skim_tree->Branch("HT5JECdown", &pre_HT5JECdown); */
+  /* skim_tree->Branch("HT5JECup", &pre_HT5JECup); */
+  /* skim_tree->Branch("HT5JERdown", &pre_HT5JERdown); */
+  /* skim_tree->Branch("HT5JERup", &pre_HT5JERup); */
+  /* skim_tree->Branch("HTJECdown", &pre_HTJECdown); */
+  /* skim_tree->Branch("HTJECup", &pre_HTJECup); */
+  /* skim_tree->Branch("HTJERdown", &pre_HTJERdown); */
+  /* skim_tree->Branch("HTJERup", &pre_HTJERup); */
+  /* skim_tree->Branch("isoElectronTracks", &pre_isoElectronTracks); */
+  /* skim_tree->Branch("isoMuonTracks", &pre_isoMuonTracks); */
+  /* skim_tree->Branch("isoPionTracks", &pre_isoPionTracks); */
+  /* skim_tree->Branch("JetID", &pre_JetID); */
+  /* skim_tree->Branch("JetIDAK8", &pre_JetIDAK8); */
+  /* skim_tree->Branch("JetIDAK8JECdown", &pre_JetIDAK8JECdown); */
+  /* skim_tree->Branch("JetIDAK8JECup", &pre_JetIDAK8JECup); */
+  /* skim_tree->Branch("JetIDAK8JERdown", &pre_JetIDAK8JERdown); */
+  /* skim_tree->Branch("JetIDAK8JERup", &pre_JetIDAK8JERup); */
+  /* skim_tree->Branch("JetIDJECdown", &pre_JetIDJECdown); */
+  /* skim_tree->Branch("JetIDJECup", &pre_JetIDJECup); */
+  /* skim_tree->Branch("JetIDJERdown", &pre_JetIDJERdown); */
+  /* skim_tree->Branch("JetIDJERup", &pre_JetIDJERup); */
+  skim_tree->Branch("Jets", &pre_Jets);
+  /* skim_tree->Branch("Jets_axismajor", &pre_Jets_axismajor); */
+  /* skim_tree->Branch("Jets_axisminor", &pre_Jets_axisminor); */
+  /* skim_tree->Branch("Jets_bDiscriminatorCSV", &pre_Jets_bDiscriminatorCSV); */
+  /* skim_tree->Branch("Jets_bJetTagDeepCSVBvsAll", &pre_Jets_bJetTagDeepCSVBvsAll); */
+  /* skim_tree->Branch("Jets_chargedEmEnergyFraction", &pre_Jets_chargedEmEnergyFraction); */
+  /* skim_tree->Branch("Jets_chargedHadronEnergyFraction", &pre_Jets_chargedHadronEnergyFraction); */
+  /* skim_tree->Branch("Jets_chargedHadronMultiplicity", &pre_Jets_chargedHadronMultiplicity); */
+  /* skim_tree->Branch("Jets_chargedMultiplicity", &pre_Jets_chargedMultiplicity); */
+  /* skim_tree->Branch("Jets_electronEnergyFraction", &pre_Jets_electronEnergyFraction); */
+  /* skim_tree->Branch("Jets_electronMultiplicity", &pre_Jets_electronMultiplicity); */
+  /* skim_tree->Branch("Jets_hadronFlavor", &pre_Jets_hadronFlavor); */
+  /* skim_tree->Branch("Jets_hfEMEnergyFraction", &pre_Jets_hfEMEnergyFraction); */
+  /* skim_tree->Branch("Jets_hfHadronEnergyFraction", &pre_Jets_hfHadronEnergyFraction); */
+  /* skim_tree->Branch("Jets_HTMask", &pre_Jets_HTMask); */
+  /* skim_tree->Branch("Jets_ID", &pre_Jets_ID); */
+  /* skim_tree->Branch("Jets_jecFactor", &pre_Jets_jecFactor); */
+  /* skim_tree->Branch("Jets_jecUnc", &pre_Jets_jecUnc); */
+  /* skim_tree->Branch("Jets_jerFactor", &pre_Jets_jerFactor); */
+  /* skim_tree->Branch("Jets_jerFactorDown", &pre_Jets_jerFactorDown); */
+  /* skim_tree->Branch("Jets_jerFactorUp", &pre_Jets_jerFactorUp); */
+  /* skim_tree->Branch("Jets_LeptonMask", &pre_Jets_LeptonMask); */
+  /* skim_tree->Branch("Jets_MHTMask", &pre_Jets_MHTMask); */
+  /* skim_tree->Branch("Jets_multiplicity", &pre_Jets_multiplicity); */
+  /* skim_tree->Branch("Jets_muonEnergyFraction", &pre_Jets_muonEnergyFraction); */
+  /* skim_tree->Branch("Jets_muonMultiplicity", &pre_Jets_muonMultiplicity); */
+  /* skim_tree->Branch("Jets_neutralEmEnergyFraction", &pre_Jets_neutralEmEnergyFraction); */
+  /* skim_tree->Branch("Jets_neutralHadronEnergyFraction", &pre_Jets_neutralHadronEnergyFraction); */
+  /* skim_tree->Branch("Jets_neutralHadronMultiplicity", &pre_Jets_neutralHadronMultiplicity); */
+  /* skim_tree->Branch("Jets_neutralMultiplicity", &pre_Jets_neutralMultiplicity); */
+  /* skim_tree->Branch("Jets_origIndex", &pre_Jets_origIndex); */
+  /* skim_tree->Branch("Jets_partonFlavor", &pre_Jets_partonFlavor); */
+  /* skim_tree->Branch("Jets_photonEnergyFraction", &pre_Jets_photonEnergyFraction); */
+  /* skim_tree->Branch("Jets_photonMultiplicity", &pre_Jets_photonMultiplicity); */
+  /* skim_tree->Branch("Jets_ptD", &pre_Jets_ptD); */
+  /* skim_tree->Branch("Jets_qgLikelihood", &pre_Jets_qgLikelihood); */
+  /* skim_tree->Branch("JetsAK8", &pre_JetsAK8); */
+  /* skim_tree->Branch("JetsAK8_axismajor", &pre_JetsAK8_axismajor); */
+  /* skim_tree->Branch("JetsAK8_axisminor", &pre_JetsAK8_axisminor); */
+  /* skim_tree->Branch("JetsAK8_chargedEmEnergyFraction", &pre_JetsAK8_chargedEmEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_chargedHadronEnergyFraction", &pre_JetsAK8_chargedHadronEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_chargedHadronMultiplicity", &pre_JetsAK8_chargedHadronMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_chargedMultiplicity", &pre_JetsAK8_chargedMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagbbvsLight", &pre_JetsAK8_DeepMassDecorrelTagbbvsLight); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagHbbvsQCD", &pre_JetsAK8_DeepMassDecorrelTagHbbvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagTvsQCD", &pre_JetsAK8_DeepMassDecorrelTagTvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagWvsQCD", &pre_JetsAK8_DeepMassDecorrelTagWvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagZbbvsQCD", &pre_JetsAK8_DeepMassDecorrelTagZbbvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagZHbbvsQCD", &pre_JetsAK8_DeepMassDecorrelTagZHbbvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepMassDecorrelTagZvsQCD", &pre_JetsAK8_DeepMassDecorrelTagZvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepTagHbbvsQCD", &pre_JetsAK8_DeepTagHbbvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepTagTvsQCD", &pre_JetsAK8_DeepTagTvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepTagWvsQCD", &pre_JetsAK8_DeepTagWvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepTagZbbvsQCD", &pre_JetsAK8_DeepTagZbbvsQCD); */
+  /* skim_tree->Branch("JetsAK8_DeepTagZvsQCD", &pre_JetsAK8_DeepTagZvsQCD); */
+  /* skim_tree->Branch("JetsAK8_doubleBDiscriminator", &pre_JetsAK8_doubleBDiscriminator); */
+  /* skim_tree->Branch("JetsAK8_ecfN2b1", &pre_JetsAK8_ecfN2b1); */
+  /* skim_tree->Branch("JetsAK8_ecfN2b2", &pre_JetsAK8_ecfN2b2); */
+  /* skim_tree->Branch("JetsAK8_ecfN3b1", &pre_JetsAK8_ecfN3b1); */
+  /* skim_tree->Branch("JetsAK8_ecfN3b2", &pre_JetsAK8_ecfN3b2); */
+  /* skim_tree->Branch("JetsAK8_electronEnergyFraction", &pre_JetsAK8_electronEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_electronMultiplicity", &pre_JetsAK8_electronMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_girth", &pre_JetsAK8_girth); */
+  /* skim_tree->Branch("JetsAK8_hfEMEnergyFraction", &pre_JetsAK8_hfEMEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_hfHadronEnergyFraction", &pre_JetsAK8_hfHadronEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_ID", &pre_JetsAK8_ID); */
+  /* skim_tree->Branch("JetsAK8_isHV", &pre_JetsAK8_isHV); */
+  /* skim_tree->Branch("JetsAK8_jecFactor", &pre_JetsAK8_jecFactor); */
+  /* skim_tree->Branch("JetsAK8_jecUnc", &pre_JetsAK8_jecUnc); */
+  /* skim_tree->Branch("JetsAK8_jerFactor", &pre_JetsAK8_jerFactor); */
+  /* skim_tree->Branch("JetsAK8_jerFactorDown", &pre_JetsAK8_jerFactorDown); */
+  /* skim_tree->Branch("JetsAK8_jerFactorUp", &pre_JetsAK8_jerFactorUp); */
+  /* skim_tree->Branch("JetsAK8_multiplicity", &pre_JetsAK8_multiplicity); */
+  /* skim_tree->Branch("JetsAK8_muonEnergyFraction", &pre_JetsAK8_muonEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_muonMultiplicity", &pre_JetsAK8_muonMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_neutralEmEnergyFraction", &pre_JetsAK8_neutralEmEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_neutralHadronEnergyFraction", &pre_JetsAK8_neutralHadronEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_neutralHadronMultiplicity", &pre_JetsAK8_neutralHadronMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_neutralMultiplicity", &pre_JetsAK8_neutralMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_NsubjettinessTau1", &pre_JetsAK8_NsubjettinessTau1); */
+  /* skim_tree->Branch("JetsAK8_NsubjettinessTau2", &pre_JetsAK8_NsubjettinessTau2); */
+  /* skim_tree->Branch("JetsAK8_NsubjettinessTau3", &pre_JetsAK8_NsubjettinessTau3); */
+  /* skim_tree->Branch("JetsAK8_NumBhadrons", &pre_JetsAK8_NumBhadrons); */
+  /* skim_tree->Branch("JetsAK8_NumChadrons", &pre_JetsAK8_NumChadrons); */
+  /* skim_tree->Branch("JetsAK8_origIndex", &pre_JetsAK8_origIndex); */
+  /* skim_tree->Branch("JetsAK8_pfMassIndependentDeepDoubleBvLJetTagsProbHbb", &pre_JetsAK8_pfMassIndependentDeepDoubleBvLJetTagsProbHbb); */
+  /* skim_tree->Branch("JetsAK8_photonEnergyFraction", &pre_JetsAK8_photonEnergyFraction); */
+  /* skim_tree->Branch("JetsAK8_photonMultiplicity", &pre_JetsAK8_photonMultiplicity); */
+  /* skim_tree->Branch("JetsAK8_ptD", &pre_JetsAK8_ptD); */
+  /* skim_tree->Branch("JetsAK8_softDropMass", &pre_JetsAK8_softDropMass); */
+  /* skim_tree->Branch("JetsAK8_subjets", &pre_JetsAK8_subjets); */
+  /* skim_tree->Branch("JetsAK8_subjets_axismajor", &pre_JetsAK8_subjets_axismajor); */
+  /* skim_tree->Branch("JetsAK8_subjets_axisminor", &pre_JetsAK8_subjets_axisminor); */
+  /* skim_tree->Branch("JetsAK8_subjets_bDiscriminatorCSV", &pre_JetsAK8_subjets_bDiscriminatorCSV); */
+  /* skim_tree->Branch("JetsAK8_subjets_jecFactor", &pre_JetsAK8_subjets_jecFactor); */
+  /* skim_tree->Branch("JetsAK8_subjets_multiplicity", &pre_JetsAK8_subjets_multiplicity); */
+  /* skim_tree->Branch("JetsAK8_subjets_ptD", &pre_JetsAK8_subjets_ptD); */
+  /* skim_tree->Branch("JetsAK8JECdown_jerFactor", &pre_JetsAK8JECdown_jerFactor); */
+  /* skim_tree->Branch("JetsAK8JECdown_origIndex", &pre_JetsAK8JECdown_origIndex); */
+  /* skim_tree->Branch("JetsAK8JECup_jerFactor", &pre_JetsAK8JECup_jerFactor); */
+  /* skim_tree->Branch("JetsAK8JECup_origIndex", &pre_JetsAK8JECup_origIndex); */
+  /* skim_tree->Branch("JetsAK8JERdown_origIndex", &pre_JetsAK8JERdown_origIndex); */
+  /* skim_tree->Branch("JetsAK8JERup_origIndex", &pre_JetsAK8JERup_origIndex); */
+  /* skim_tree->Branch("JetsJECdown_jerFactor", &pre_JetsJECdown_jerFactor); */
+  /* skim_tree->Branch("JetsJECdown_origIndex", &pre_JetsJECdown_origIndex); */
+  /* skim_tree->Branch("JetsJECup_jerFactor", &pre_JetsJECup_jerFactor); */
+  /* skim_tree->Branch("JetsJECup_origIndex", &pre_JetsJECup_origIndex); */
+  /* skim_tree->Branch("JetsJERdown_origIndex", &pre_JetsJERdown_origIndex); */
+  /* skim_tree->Branch("JetsJERup_origIndex", &pre_JetsJERup_origIndex); */
+  /* skim_tree->Branch("madHT", &pre_madHT); */
+  /* skim_tree->Branch("madMinDeltaRStatus", &pre_madMinDeltaRStatus); */
+  /* skim_tree->Branch("madMinPhotonDeltaR", &pre_madMinPhotonDeltaR); */
+  skim_tree->Branch("MET", &pre_MET);
+  /* skim_tree->Branch("METDown", &pre_METDown); */
+  /* skim_tree->Branch("METPhi", &pre_METPhi); */
+  /* skim_tree->Branch("METPhiDown", &pre_METPhiDown); */
+  /* skim_tree->Branch("METPhiUp", &pre_METPhiUp); */
+  /* skim_tree->Branch("METSignificance", &pre_METSignificance); */
+  /* skim_tree->Branch("METUp", &pre_METUp); */
+  /* skim_tree->Branch("MHT", &pre_MHT); */
+  /* skim_tree->Branch("MHTJECdown", &pre_MHTJECdown); */
+  /* skim_tree->Branch("MHTJECup", &pre_MHTJECup); */
+  /* skim_tree->Branch("MHTJERdown", &pre_MHTJERdown); */
+  /* skim_tree->Branch("MHTJERup", &pre_MHTJERup); */
+  /* skim_tree->Branch("MHTPhi", &pre_MHTPhi); */
+  /* skim_tree->Branch("MHTPhiJECdown", &pre_MHTPhiJECdown); */
+  /* skim_tree->Branch("MHTPhiJECup", &pre_MHTPhiJECup); */
+  /* skim_tree->Branch("MHTPhiJERdown", &pre_MHTPhiJERdown); */
+  /* skim_tree->Branch("MHTPhiJERup", &pre_MHTPhiJERup); */
+  /* skim_tree->Branch("MJJ_AK8", &pre_MJJ_AK8); */
+  /* skim_tree->Branch("Mmc_AK8", &pre_Mmc_AK8); */
+  /* skim_tree->Branch("MT_AK8", &pre_MT_AK8); */
+  /* skim_tree->Branch("Muons", &pre_Muons); */
+  /* skim_tree->Branch("Muons_charge", &pre_Muons_charge); */
+  /* skim_tree->Branch("Muons_iso", &pre_Muons_iso); */
+  /* skim_tree->Branch("Muons_mediumID", &pre_Muons_mediumID); */
+  /* skim_tree->Branch("Muons_MTW", &pre_Muons_MTW); */
+  /* skim_tree->Branch("Muons_passIso", &pre_Muons_passIso); */
+  /* skim_tree->Branch("Muons_tightID", &pre_Muons_tightID); */
+  /* skim_tree->Branch("nAllVertices", &pre_nAllVertices); */
+  /* skim_tree->Branch("NElectrons", &pre_NElectrons); */
+  skim_tree->Branch("NJets", &pre_NJets);
+  /* skim_tree->Branch("NJetsISR", &pre_NJetsISR); */
+  /* skim_tree->Branch("NJetsISRJECdown", &pre_NJetsISRJECdown); */
+  /* skim_tree->Branch("NJetsISRJECup", &pre_NJetsISRJECup); */
+  /* skim_tree->Branch("NJetsISRJERdown", &pre_NJetsISRJERdown); */
+  /* skim_tree->Branch("NJetsISRJERup", &pre_NJetsISRJERup); */
+  /* skim_tree->Branch("NJetsJECdown", &pre_NJetsJECdown); */
+  /* skim_tree->Branch("NJetsJECup", &pre_NJetsJECup); */
+  /* skim_tree->Branch("NJetsJERdown", &pre_NJetsJERdown); */
+  /* skim_tree->Branch("NJetsJERup", &pre_NJetsJERup); */
+  /* skim_tree->Branch("NMuons", &pre_NMuons); */
+  /* skim_tree->Branch("NonPrefiringProb", &pre_NonPrefiringProb); */
+  /* skim_tree->Branch("NonPrefiringProbDown", &pre_NonPrefiringProbDown); */
+  /* skim_tree->Branch("NonPrefiringProbUp", &pre_NonPrefiringProbUp); */
+  /* skim_tree->Branch("NumEvents", &pre_NumEvents); */
+  /* skim_tree->Branch("NumInteractions", &pre_NumInteractions); */
+  /* skim_tree->Branch("NVtx", &pre_NVtx); */
+  /* skim_tree->Branch("PDFweights", &pre_PDFweights); */
+  /* skim_tree->Branch("PFCaloMETRatio", &pre_PFCaloMETRatio); */
+  /* skim_tree->Branch("Photons", &pre_Photons); */
+  /* skim_tree->Branch("Photons_electronFakes", &pre_Photons_electronFakes); */
+  /* skim_tree->Branch("Photons_fullID", &pre_Photons_fullID); */
+  /* skim_tree->Branch("Photons_genMatched", &pre_Photons_genMatched); */
+  /* skim_tree->Branch("Photons_hadTowOverEM", &pre_Photons_hadTowOverEM); */
+  /* skim_tree->Branch("Photons_hasPixelSeed", &pre_Photons_hasPixelSeed); */
+  /* skim_tree->Branch("Photons_isEB", &pre_Photons_isEB); */
+  /* skim_tree->Branch("Photons_nonPrompt", &pre_Photons_nonPrompt); */
+  /* skim_tree->Branch("Photons_passElectronVeto", &pre_Photons_passElectronVeto); */
+  /* skim_tree->Branch("Photons_pfChargedIso", &pre_Photons_pfChargedIso); */
+  /* skim_tree->Branch("Photons_pfChargedIsoRhoCorr", &pre_Photons_pfChargedIsoRhoCorr); */
+  /* skim_tree->Branch("Photons_pfGammaIso", &pre_Photons_pfGammaIso); */
+  /* skim_tree->Branch("Photons_pfGammaIsoRhoCorr", &pre_Photons_pfGammaIsoRhoCorr); */
+  /* skim_tree->Branch("Photons_pfNeutralIso", &pre_Photons_pfNeutralIso); */
+  /* skim_tree->Branch("Photons_pfNeutralIsoRhoCorr", &pre_Photons_pfNeutralIsoRhoCorr); */
+  /* skim_tree->Branch("Photons_sigmaIetaIeta", &pre_Photons_sigmaIetaIeta); */
+  /* skim_tree->Branch("PrimaryVertexFilter", &pre_PrimaryVertexFilter); */
+  /* skim_tree->Branch("PSweights", &pre_PSweights); */
+  /* skim_tree->Branch("puSysDown", &pre_puSysDown); */
+  /* skim_tree->Branch("puSysUp", &pre_puSysUp); */
+  /* skim_tree->Branch("puWeight", &pre_puWeight); */
+  /* skim_tree->Branch("ScaleWeights", &pre_ScaleWeights); */
+  /* skim_tree->Branch("SignalParameters", &pre_SignalParameters); */
+  /* skim_tree->Branch("SusyLSPMass", &pre_SusyLSPMass); */
+  /* skim_tree->Branch("SusyMotherMass", &pre_SusyMotherMass); */
+  /* skim_tree->Branch("TAPElectronTracks", &pre_TAPElectronTracks); */
+  /* skim_tree->Branch("TAPElectronTracks_dxypv", &pre_TAPElectronTracks_dxypv); */
+  /* skim_tree->Branch("TAPElectronTracks_leptonMatch", &pre_TAPElectronTracks_leptonMatch); */
+  /* skim_tree->Branch("TAPElectronTracks_mT", &pre_TAPElectronTracks_mT); */
+  /* skim_tree->Branch("TAPElectronTracks_pfRelIso03chg", &pre_TAPElectronTracks_pfRelIso03chg); */
+  /* skim_tree->Branch("TAPElectronTracks_trkiso", &pre_TAPElectronTracks_trkiso); */
+  /* skim_tree->Branch("TAPMuonTracks", &pre_TAPMuonTracks); */
+  /* skim_tree->Branch("TAPMuonTracks_dxypv", &pre_TAPMuonTracks_dxypv); */
+  /* skim_tree->Branch("TAPMuonTracks_leptonMatch", &pre_TAPMuonTracks_leptonMatch); */
+  /* skim_tree->Branch("TAPMuonTracks_mT", &pre_TAPMuonTracks_mT); */
+  /* skim_tree->Branch("TAPMuonTracks_pfRelIso03chg", &pre_TAPMuonTracks_pfRelIso03chg); */
+  /* skim_tree->Branch("TAPMuonTracks_trkiso", &pre_TAPMuonTracks_trkiso); */
+  /* skim_tree->Branch("TAPPionTracks", &pre_TAPPionTracks); */
+  /* skim_tree->Branch("TAPPionTracks_dxypv", &pre_TAPPionTracks_dxypv); */
+  /* skim_tree->Branch("TAPPionTracks_leptonMatch", &pre_TAPPionTracks_leptonMatch); */
+  /* skim_tree->Branch("TAPPionTracks_mT", &pre_TAPPionTracks_mT); */
+  /* skim_tree->Branch("TAPPionTracks_pfRelIso03chg", &pre_TAPPionTracks_pfRelIso03chg); */
+  /* skim_tree->Branch("TAPPionTracks_trkiso", &pre_TAPPionTracks_trkiso); */
+  /* skim_tree->Branch("TriggerPass", &pre_TriggerPass); */
+  /* skim_tree->Branch("TriggerPrescales", &pre_TriggerPrescales); */
+  /* skim_tree->Branch("TriggerVersion", &pre_TriggerVersion); */
+  /* skim_tree->Branch("TrueNumInteractions", &pre_TrueNumInteractions); */
+  /* skim_tree->Branch("Weight", &pre_Weight); */
+  /* skim_tree->Branch("ZCandidates", &pre_ZCandidates); */
+
+  //  additonal branches by Alpana: 01 Feb22
+  skim_tree->Branch("NhadJets",&pre_NhadJets);
+  skim_tree->Branch("Nphotons",&pre_Nphotons);
+  skim_tree->Branch("BestPhoton",&pre_BestPhoton);
+  skim_tree->Branch("hadJets",&pre_hadJets);
+  skim_tree->Branch("ST",&pre_ST);
+  skim_tree->Branch("HtSum",&pre_HtSum);
+  skim_tree->Branch("mTPhoMET_",&pre_mTPhoMET_);
+  skim_tree->Branch("dPhi_PhoMET_",&pre_dPhi_PhoMET_);
+  skim_tree->Branch("evtwt",&pre_evtwt);
+  skim_tree->Branch("dPhi_Met_Jet",&pre_dPhi_Met_Jet);
+  skim_tree->Branch("dPhi_Jet_pho",&pre_dPhi_Jet_pho);
+  skim_tree->Branch("eta_jet_pho",&pre_eta_jet_pho);
+  skim_tree->Branch("eta_jet_met",&pre_eta_jet_met);
+  skim_tree->Branch("eta_met_pho",&pre_eta_met_pho);
+
 }
 Bool_t NtupleVariables::Notify()
 {
