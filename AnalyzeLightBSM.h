@@ -21,7 +21,7 @@ class AnalyzeLightBSM : public NtupleVariables{
   ~AnalyzeLightBSM();
   Bool_t   FillChain(TChain *chain, const TString &inputFileList);
   Long64_t LoadTree(Long64_t entry);
-  void     EventLoop(const char *,const char *,const char *);
+  void     EventLoop(const char *,const char *,const char *,const char *);
   void     BookHistogram(const char *, const char *);
   int getBinNoV4(int);
   int getBinNoV7(int);
@@ -29,6 +29,7 @@ class AnalyzeLightBSM : public NtupleVariables{
   int getBinNoV6_WithOnlyBLSelec(int,int);
   TLorentzVector getBestPhoton();
   double getGendRLepPho();
+  void CrossSection_Map_Init();
   double getGenLep(TLorentzVector);
   //Long64_t transMass(float , float, float, float);
   void print(Long64_t);
@@ -156,8 +157,8 @@ void AnalyzeLightBSM::BookHistogram(const char *outFileName, const char *N2_mass
   char hname[1000],hname1[1000], hname1_2d[1000],hname_2d[10000],hname_njets[10000],hname_nBjets[10000], hname_Met[10000],hname_PhoPt[10000],hname_Mt_phopt[10000],hname_dPhi[10000],hname_st[1000],hname_ht[1000],hname_njet_vs_ST[1000],hname_njet_vs_HT[1000],hname_ST_vs_ptPho[1000];
   //  const char *baseline[25]= {"Nocut","skim","bkg_comp","Met-filter","veto-lep","veto-iso","dPhi_Met","pt_jet","ST_300","Met_250","pT_100","nocut","HT_1TeV_Met100","HT_1TeV_Met250","HT_1TeV_Met250_pt_100","HT_15TeV_Met100","HT_15TeV_Met250","HT_15TeV_Met250_pt_100","HT_175TeV_Met100","HT_175TeV_Met250","HT_175TeV_Met250_pt_100","HT_2TeV_Met100","HT_2TeV_Met250","HT_2TeV_Met250_pt_100","nocut_sam"};//"st_300_Met100","pt_st_Met_250","st_300_Met250","nocut"};
   Double_t xbins_PhotPt[97]={};//{20,25,30,35,40,,7,10,20,30,40,50,80,90,100,150};
-  const char *baseline[24]= {"Nocut","skim","bkg_comp","Met-filter","veto-lep","veto-iso","dPhi_Met","pt_jet","ST_300","Met_250","pT_100","nocut","HT_1TeV_Met100","HT_1TeV_Met250","HT_1TeV_Met250_pt_100","HT_15TeV_Met100","HT_15TeV_Met250","HT_15TeV_Met250_pt_100","HT_175TeV_Met100","HT_175TeV_Met250","HT_175TeV_Met250_pt_100","HT_2TeV_Met100","HT_2TeV_Met250","HT_2TeV_Met250_pt_100"};
-  //const char *baseline[25]={"Nocut","nphotons_1","Phot_pT_30","nHadJets_2","phojet_match","bkg_cmp","cleanin_filters","lep_veto","iso_trk","dphi_MET","MET_100","ST_300","MET_250","pho_pt_100","nocut","HT_1TeV_Met100","HT_1TeV_Met250","HT_1TeV_Met250_pt_100","HT_15TeV_Met100","HT_15TeV_Met250","HT_15TeV_Met250_pt_100","HT_175TeV_Met100","nocut_sam","basic_sam"};//"st_300_Met100","pt_st_Met_250","st_300_Met250","nocut"
+  //const char *baseline[24]= {"Nocut","skim","bkg_comp","Met-filter","veto-lep","veto-iso","dPhi_Met","pt_jet","ST_300","Met_250","pT_100","nocut","HT_1TeV_Met100","HT_1TeV_Met250","HT_1TeV_Met250_pt_100","HT_15TeV_Met100","HT_15TeV_Met250","HT_15TeV_Met250_pt_100","HT_175TeV_Met100","HT_175TeV_Met250","HT_175TeV_Met250_pt_100","HT_2TeV_Met100","HT_2TeV_Met250","HT_2TeV_Met250_pt_100"};
+  const char *baseline[25]={"Nocut","photon_selec","Phot_pT_20","nHadJets_2","MET_100","ST_300","bkg_comp","Met_cleaning","lept_veto","veto_chargedTracks","dPhi_MET","jet_pT_Pho_pT","MET_250","pho_pt_100","Final","Pho_pT_30","HT_1TeV_Met250","HT_1TeV_Met250_pt_100","HT_15TeV_Met100","HT_15TeV_Met250","HT_15TeV_Met250_pt_100","HT_175TeV_Met100","nocut_sam","basic_sam"};//"st_300_Met100","pt_st_Met_250","st_300_Met250","nocut"
   for(int i_bin=0;i_bin<97;i_bin++)
     {
       if(i_bin<=40) xbins_PhotPt[i_bin]=0+(5*(i_bin));
@@ -328,9 +329,34 @@ AnalyzeLightBSM::AnalyzeLightBSM(const TString &inputFileList, const char *outFi
   NtupleVariables::Init(tree,nameData);
 
   BookHistogram(outFileName, N2_mass);
-  
-}
+  CrossSection_Map_Init();
 
+}
+void AnalyzeLightBSM::CrossSection_Map_Init()
+{
+  char *f_name_EH = new char[2000];
+  sprintf(f_name_EH,"./map_crosssection_SMprocess.txt");//,chi2_method);
+  std::ifstream in_EH(f_name_EH);
+  if(!in_EH) {
+    cout<<"ERROR => "<<f_name_EH<<" Not found"<<endl;
+    //return;                                                                                                                                
+    exit(0);
+  }
+  string process_name;
+  float value;
+  cout<<"File name = "<<f_name_EH<<endl;
+  while(in_EH>>process_name>>value){
+    std::pair<std::string, float> temp_pair;
+    /* std::vector<float> temp_vector; */
+    /* temp_vector.push_back(w1); */
+    /* temp_vector.push_back(w2); */
+    /* temp_vector.push_back(w3); */
+
+
+   temp_pair = std::make_pair(process_name,value);
+    cross_sectionValues.insert(temp_pair);
+  }
+}
 Bool_t AnalyzeLightBSM::FillChain(TChain *chain, const TString &inputFileList) {
 
   ifstream infile(inputFileList, ifstream::in);

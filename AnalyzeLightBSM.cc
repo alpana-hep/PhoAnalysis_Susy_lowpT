@@ -10,7 +10,7 @@
 #include <fstream>
 #include"TGraphErrors.h"
 #include"TGraphAsymmErrors.h"
- #include "TMVA/Tools.h"
+#include "TMVA/Tools.h"
 #include "TMVA/Reader.h"
 #include "TMVA/MethodCuts.h"
 using namespace TMVA;
@@ -28,13 +28,13 @@ int main(int argc, char* argv[])
   AnalyzeLightBSM ana(inputFileList, outFileName, data,sample);
   cout << "dataset " << data << " " << endl;
 
-  ana.EventLoop(data,inputFileList,sample);
+  ana.EventLoop(data,inputFileList,sample,outFileName);
   Tools::Instance();
 
   return 0;
 }
 
-void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, const char *sample) {
+void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, const char *sample , const char *outFileName) {
   if (fChain == 0) return;
 
   Long64_t nentries = fChain->GetEntriesFast();
@@ -43,7 +43,7 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
   char* outfileName = new char[1000];
   char* basedir= new char[2000];
   sprintf(basedir,".");//root://cmseos.fnal.gov.in//store/user/kalpana/Susy_phoMet/SkimmedNtuples");
-  sprintf(outfileName,"%s/skimmed_ntuple_%s_%s.root",basedir, data,sample);
+  sprintf(outfileName,"%s/skimmed_ntuple_%s.root",basedir,outFileName);
   TFile* outfile = TFile::Open(outfileName,"recreate");
   skim_tree = new TTree("Pre_Selection1","variables for BDT training");
   NtupleVariables::init_piTree();
@@ -65,6 +65,10 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
   if(s_data.Contains("2017")) lumiInfb=41.529;
   if(s_data.Contains("2018")) lumiInfb=59.74;
   if(s_data.Contains("signal"))lumiInfb= 59.74; //since we only have 2018 dataset
+  std::string s_process = sample;
+  double cross_section = getCrossSection(s_process);
+  cout<<cross_section<<"\t"<<"analyzed process"<<endl;
+
    for (Long64_t jentry=0; jentry<nentries;jentry++)
     {
       double progress = 10.0 * jentry / (1.0 * nentries);
@@ -262,7 +266,12 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
       else if(s_sample.Contains("MCMC_86_7257_2000"))
         wt = (0.00101*lumiInfb*1000)/nentries;
       else if(s_data.Contains("2016") || s_data.Contains("2017") || s_data.Contains("2018"))
-	wt = Weight*lumiInfb*1000.0;
+	{
+	  std::string s_process = sample;
+	  double cross_section = getCrossSection(s_process);
+	  //cout<<cross_section<<"\t"<<"analyzed process"<<endl;
+	  wt = (cross_section*lumiInfb*1000.0)/nentries;
+	}
 
       h_selectBaselineYields_->Fill("No cuts, evt in 1/fb",wt);
       nocut++;
@@ -276,12 +285,22 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
       int count_genEle=0,count_recEle=0;
       TLorentzVector genPho1,genLep1;
       int leadGenPhoIdx=-100;
-      
-      TLorentzVector bestPhoton=getBestPhoton();
-      if(bestPhotonIndxAmongPhotons<0) continue;
-      bool bestPhoHasPxlSeed=true;
-      if((*Photons_hasPixelSeed)[bestPhotonIndxAmongPhotons]<0.001) bestPhoHasPxlSeed=false;
-      if( bestPhoHasPxlSeed ) continue;
+      // h_Njets[0]->Fill(nHadJets,wt);
+      // h_Nbjets[0]->Fill(BTags,wt);
+      // h_MET_[0]->Fill(MET,wt);
+      // h_PhotonPt[0]->Fill(bestPhoton.Pt(),wt);
+      // h_Mt_PhoMET[0]->Fill(mTPhoMET,wt);
+      // h_dPhi_PhoMET[0]->Fill(dPhi_PhoMET,wt);
+      // h_St[0]->Fill(ST,wt);
+      // h_HT[0]->Fill(Ht,wt);
+      // h_njets_vs_ST[0]->Fill(nHadJets,ST,wt);
+      // h_njets_vs_HT[0]->Fill(nHadJets,Ht,wt);
+      // h_ST_vs_ptPho[0]->Fill(ST,bestPhoton.Pt(),wt);
+       TLorentzVector bestPhoton=getBestPhoton();
+      // if(bestPhotonIndxAmongPhotons<0) continue;
+      // bool bestPhoHasPxlSeed=true;
+      // if((*Photons_hasPixelSeed)[bestPhotonIndxAmongPhotons]<0.001) bestPhoHasPxlSeed=false;
+      // if( bestPhoHasPxlSeed ) continue;
       // **************** Note: removing additonal condition for best photon      *****************  ////
       
       // *******************  Selecting Jet objects ********************************//
@@ -316,6 +335,9 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     // ******* Dphi between MET and Best Photon     ******************** //                                                                 
     double dPhi_PhoMET= abs(DeltaPhi(METPhi,bestPhoton.Phi()));
     //if (nHadJets<2) cout<<"wrong event"<<endl;
+    h_Njets[16]->Fill(NJets,wt);
+    h_HT[16]->Fill(HT,wt);
+
     h_Njets[0]->Fill(nHadJets,wt);
     h_Nbjets[0]->Fill(BTags,wt);
     h_MET_[0]->Fill(MET,wt);
@@ -327,21 +349,13 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     h_njets_vs_ST[0]->Fill(nHadJets,ST,wt);
     h_njets_vs_HT[0]->Fill(nHadJets,Ht,wt);
     h_ST_vs_ptPho[0]->Fill(ST,bestPhoton.Pt(),wt);
-    if (k > decade)
-      cout << 10 * k << " %-3" << endl;
-    if(bestPhoton.Pt()>20) 
-    h_selectBaselineYields_->Fill("pt>20",wt);
-    else continue;
-    if (nHadJets>=2) 
-    h_selectBaselineYields_->Fill("njets>=2",wt);
-    else continue;
-    if(MET>100) 
-    h_selectBaselineYields_->Fill("MET>100",wt);
-    else continue;
-    if(ST>300)
-      h_selectBaselineYields_->Fill("ST>300",wt);
-    else continue;
-    h_selectBaselineYields_->Fill("skims",wt);
+    // TLorentzVector bestPhoton=getBestPhoton();
+    if(bestPhotonIndxAmongPhotons<0) continue;
+    bool bestPhoHasPxlSeed=true;
+    if((*Photons_hasPixelSeed)[bestPhotonIndxAmongPhotons]<0.001) bestPhoHasPxlSeed=false;
+    if( bestPhoHasPxlSeed ) continue;
+    h_selectBaselineYields_->Fill("photon_selec",wt);
+
     h_Njets[1]->Fill(nHadJets,wt);
     h_Nbjets[1]->Fill(BTags,wt);
     h_MET_[1]->Fill(MET,wt);
@@ -353,6 +367,69 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     h_njets_vs_ST[1]->Fill(nHadJets,ST,wt);
     h_njets_vs_HT[1]->Fill(nHadJets,Ht,wt);
     h_ST_vs_ptPho[1]->Fill(ST,bestPhoton.Pt(),wt);
+
+    if (k > decade)
+      cout << 10 * k << " %-3" << endl;
+    if(bestPhoton.Pt()>20) 
+    h_selectBaselineYields_->Fill("pt>20",wt);
+    else continue;
+    h_Njets[2]->Fill(nHadJets,wt);
+    h_Nbjets[2]->Fill(BTags,wt);
+    h_MET_[2]->Fill(MET,wt);
+    h_PhotonPt[2]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[2]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[2]->Fill(dPhi_PhoMET,wt);
+    h_St[2]->Fill(ST,wt);
+    h_HT[2]->Fill(Ht,wt);
+    h_njets_vs_ST[2]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[2]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[2]->Fill(ST,bestPhoton.Pt(),wt);
+
+    if (nHadJets>=2) 
+    h_selectBaselineYields_->Fill("njets>=2",wt);
+    else continue;
+    h_Njets[3]->Fill(nHadJets,wt);
+    h_Nbjets[3]->Fill(BTags,wt);
+    h_MET_[3]->Fill(MET,wt);
+    h_PhotonPt[3]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[3]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[3]->Fill(dPhi_PhoMET,wt);
+    h_St[3]->Fill(ST,wt);
+    h_HT[3]->Fill(Ht,wt);
+    h_njets_vs_ST[3]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[3]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[3]->Fill(ST,bestPhoton.Pt(),wt);
+
+    if(MET>100) 
+    h_selectBaselineYields_->Fill("MET>100",wt);
+    else continue;
+    h_Njets[4]->Fill(nHadJets,wt);
+    h_Nbjets[4]->Fill(BTags,wt);
+    h_MET_[4]->Fill(MET,wt);
+    h_PhotonPt[4]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[4]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[4]->Fill(dPhi_PhoMET,wt);
+    h_St[4]->Fill(ST,wt);
+    h_HT[4]->Fill(Ht,wt);
+    h_njets_vs_ST[4]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[4]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[4]->Fill(ST,bestPhoton.Pt(),wt);
+
+    if(ST>300)
+      h_selectBaselineYields_->Fill("ST>300",wt);
+    else continue;
+    //    h_selectBaselineYields_->Fill("skims",wt);
+    h_Njets[5]->Fill(nHadJets,wt);
+    h_Nbjets[5]->Fill(BTags,wt);
+    h_MET_[5]->Fill(MET,wt);
+    h_PhotonPt[5]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[5]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[5]->Fill(dPhi_PhoMET,wt);
+    h_St[5]->Fill(ST,wt);
+    h_HT[5]->Fill(Ht,wt);
+    h_njets_vs_ST[5]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[5]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[5]->Fill(ST,bestPhoton.Pt(),wt);
     if( s_sample.Contains("TTJets-HT") && madHT<600) continue;
     if( s_sample.Contains("TTJets-inc") && madHT>600) continue;
     if(!genphocheck)
@@ -392,7 +469,7 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
                 if(!(madMinPhotonDeltaR < 0.5 || mindr_Pho_genlep < 0.5)) continue;
               }
           }
-        if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets_inc") || s_sample.Contains("TTJets2_v17"))
+        if(s_sample.Contains("TTJets_HT") || s_sample.Contains("TTJets_inc") ||s_sample.Contains("TTJets")|| s_sample.Contains("TTJets2_v17"))
           {
             if(!hasGenPromptPhoton)
               {
@@ -426,22 +503,22 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
 
     h_selectBaselineYields_->Fill("after bkg cmp",wt);
     bkg_comp++;
-    h_Njets[2]->Fill(nHadJets,wt);
-    h_Nbjets[2]->Fill(BTags,wt);
-    h_MET_[2]->Fill(MET,wt);
-    h_PhotonPt[2]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[2]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[2]->Fill(dPhi_PhoMET,wt);
-    h_St[2]->Fill(ST,wt);
-    h_HT[2]->Fill(Ht,wt);
-    h_njets_vs_ST[2]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[2]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[2]->Fill(ST,bestPhoton.Pt(),wt);
+    h_Njets[6]->Fill(nHadJets,wt);
+    h_Nbjets[6]->Fill(BTags,wt);
+    h_MET_[6]->Fill(MET,wt);
+    h_PhotonPt[6]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[6]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[6]->Fill(dPhi_PhoMET,wt);
+    h_St[6]->Fill(ST,wt);
+    h_HT[6]->Fill(Ht,wt);
+    h_njets_vs_ST[6]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[6]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[6]->Fill(ST,bestPhoton.Pt(),wt);
     //MEt cleaning filters
     if(s_data.Contains("2016") || s_data.Contains("2017") || s_data.Contains("2018"))
       {
-        // if(!(PrimaryVertexFilter ==1 && globalSuperTightHalo2016Filter == 1 && HBHENoiseFilter==1 && HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter && ecalBadCalibReducedExtraFilter && NVtx>0 && eeBadScFilter)) continue;
-	if(!(CSCTightHaloFilter==1 && HBHENoiseFilter==1 && HBHEIsoNoiseFilter==1 && eeBadScFilter==1 && EcalDeadCellTriggerPrimitiveFilter==1 && BadPFMuonFilter && NVtx > 0) ) continue;
+        if(!(PrimaryVertexFilter ==1 && globalSuperTightHalo2016Filter == 1 && HBHENoiseFilter==1 && HBHEIsoNoiseFilter==1 && EcalDeadCellTriggerPrimitiveFilter == 1 && BadPFMuonFilter && ecalBadCalibReducedExtraFilter && NVtx>0 && eeBadScFilter)) continue;
+	//if(!(CSCTightHaloFilter==1 && HBHENoiseFilter==1 && HBHEIsoNoiseFilter==1 && eeBadScFilter==1 && EcalDeadCellTriggerPrimitiveFilter==1 && BadPFMuonFilter && NVtx > 0) ) continue;
 
       }
     h_selectBaselineYields_->Fill("MetCleaning",wt);
@@ -449,47 +526,47 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
       cout << 10 * k << " %-4" << endl;
 
 
-    h_Njets[3]->Fill(nHadJets,wt);
-    h_Nbjets[3]->Fill(BTags,wt);
-    h_MET_[3]->Fill(MET,wt);
-    h_PhotonPt[3]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[3]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[3]->Fill(dPhi_PhoMET,wt);
-    h_St[3]->Fill(ST,wt);
-    h_HT[3]->Fill(Ht,wt);
-    h_njets_vs_ST[3]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[3]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[3]->Fill(ST,bestPhoton.Pt(),wt);
+    h_Njets[7]->Fill(nHadJets,wt);
+    h_Nbjets[7]->Fill(BTags,wt);
+    h_MET_[7]->Fill(MET,wt);
+    h_PhotonPt[7]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[7]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[7]->Fill(dPhi_PhoMET,wt);
+    h_St[7]->Fill(ST,wt);
+    h_HT[7]->Fill(Ht,wt);
+    h_njets_vs_ST[7]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[7]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[7]->Fill(ST,bestPhoton.Pt(),wt);
     if (NElectrons == 0 && NMuons == 0 ) h_selectBaselineYields_->Fill("veto electron & Muon",wt);
     else continue;
-    h_Njets[4]->Fill(nHadJets,wt);
-    h_Nbjets[4]->Fill(BTags,wt);
-    h_MET_[4]->Fill(MET,wt);
-    h_PhotonPt[4]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[4]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[4]->Fill(dPhi_PhoMET,wt);
-    h_St[4]->Fill(ST,wt);
-    h_HT[4]->Fill(Ht,wt);
-    h_njets_vs_ST[4]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[4]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[4]->Fill(ST,bestPhoton.Pt(),wt);
+    h_Njets[8]->Fill(nHadJets,wt);
+    h_Nbjets[8]->Fill(BTags,wt);
+    h_MET_[8]->Fill(MET,wt);
+    h_PhotonPt[8]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[8]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[8]->Fill(dPhi_PhoMET,wt);
+    h_St[8]->Fill(ST,wt);
+    h_HT[8]->Fill(Ht,wt);
+    h_njets_vs_ST[8]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[8]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[8]->Fill(ST,bestPhoton.Pt(),wt);
     if(isoElectronTracks==0 && isoMuonTracks ==0 && isoPionTracks==0)
       {
 	h_selectBaselineYields_->Fill("Iso track",wt);
       }
     else continue;
 
-    h_Njets[5]->Fill(nHadJets,wt);
-    h_Nbjets[5]->Fill(BTags,wt);
-    h_MET_[5]->Fill(MET,wt);
-    h_PhotonPt[5]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[5]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[5]->Fill(dPhi_PhoMET,wt);
-    h_St[5]->Fill(ST,wt);
-    h_HT[5]->Fill(Ht,wt);
-    h_njets_vs_ST[5]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[5]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[5]->Fill(ST,bestPhoton.Pt(),wt);
+    h_Njets[9]->Fill(nHadJets,wt);
+    h_Nbjets[9]->Fill(BTags,wt);
+    h_MET_[9]->Fill(MET,wt);
+    h_PhotonPt[9]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[9]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[9]->Fill(dPhi_PhoMET,wt);
+    h_St[9]->Fill(ST,wt);
+    h_HT[9]->Fill(Ht,wt);
+    h_njets_vs_ST[9]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[9]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[9]->Fill(ST,bestPhoton.Pt(),wt);
     
     TLorentzVector Met;
     Met.SetPtEtaPhiE(MET,0,METPhi,0);
@@ -520,46 +597,23 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
 	h_selectBaselineYields_->Fill("dPhi1 & dPhi2 >= 0.3",wt);
       }
     else continue;
-    h_Njets[6]->Fill(nHadJets,wt);
-    h_Nbjets[6]->Fill(BTags,wt);
-    h_MET_[6]->Fill(MET,wt);
-    h_PhotonPt[6]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[6]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[6]->Fill(dPhi_PhoMET,wt);
-    h_St[6]->Fill(ST,wt);
-    h_HT[6]->Fill(Ht,wt);
-    h_njets_vs_ST[6]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[6]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[6]->Fill(ST,bestPhoton.Pt(),wt);
+    h_Njets[10]->Fill(nHadJets,wt);
+    h_Nbjets[10]->Fill(BTags,wt);
+    h_MET_[10]->Fill(MET,wt);
+    h_PhotonPt[10]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[10]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[10]->Fill(dPhi_PhoMET,wt);
+    h_St[10]->Fill(ST,wt);
+    h_HT[10]->Fill(Ht,wt);
+    h_njets_vs_ST[10]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[10]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[10]->Fill(ST,bestPhoton.Pt(),wt);
     
     // ********************  photon jet matching : pT comparison *************************//
     if(phoMatchingJetIndx>=0 && ((*Jets)[phoMatchingJetIndx].Pt())/(bestPhoton.Pt()) < 1.0) continue;
     if(phoMatchingJetIndx<0) continue;
     
     h_selectBaselineYields_->Fill("additional Bhumika",wt);
-    h_Njets[7]->Fill(nHadJets,wt);
-    h_Nbjets[7]->Fill(BTags,wt);
-    h_MET_[7]->Fill(MET,wt);
-    h_PhotonPt[7]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[7]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[7]->Fill(dPhi_PhoMET,wt);
-    h_St[7]->Fill(ST,wt);
-    h_HT[7]->Fill(Ht,wt);
-    
-    h_Njets[8]->Fill(nHadJets,wt);
-    h_Nbjets[8]->Fill(BTags,wt);
-    h_MET_[8]->Fill(MET,wt);
-    h_PhotonPt[8]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[8]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[8]->Fill(dPhi_PhoMET,wt);
-    h_St[8]->Fill(ST,wt);
-    h_HT[8]->Fill(Ht,wt);
-    h_njets_vs_ST[8]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[8]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[8]->Fill(ST,bestPhoton.Pt(),wt);
-    
-    int Sbin_met100=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);
-    h_Sbins_v6_withOnlyBL_Selec_Met100->Fill(Sbin_met100,wt);
     h_Njets[11]->Fill(nHadJets,wt);
     h_Nbjets[11]->Fill(BTags,wt);
     h_MET_[11]->Fill(MET,wt);
@@ -568,45 +622,92 @@ void AnalyzeLightBSM::EventLoop(const char *data,const char *inputFileList, cons
     h_dPhi_PhoMET[11]->Fill(dPhi_PhoMET,wt);
     h_St[11]->Fill(ST,wt);
     h_HT[11]->Fill(Ht,wt);
-    h_njets_vs_ST[11]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[11]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[11]->Fill(ST,bestPhoton.Pt(),wt);
-
-    int Sbin=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);                                                                                    
+    int Sbin=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);
     h_Sbins_v6_withOnlyBL_Selec->Fill(Sbin,wt);
+
+    if (bestPhoton.Pt()>=30)
+      h_selectBaselineYields_->Fill("pho-pT>30",wt);
+    else continue;
+
+    h_Njets[15]->Fill(nHadJets,wt);
+    h_Nbjets[15]->Fill(BTags,wt);
+    h_MET_[15]->Fill(MET,wt);
+    h_PhotonPt[15]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[15]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[15]->Fill(dPhi_PhoMET,wt);
+    h_St[15]->Fill(ST,wt);
+    h_HT[15]->Fill(Ht,wt);
+
+    if(MET>250)
+      h_selectBaselineYields_->Fill("MET>250",wt);
+    else
+      continue;
+    h_Njets[12]->Fill(nHadJets,wt);
+    h_Nbjets[12]->Fill(BTags,wt);
+    h_MET_[12]->Fill(MET,wt);
+    h_PhotonPt[12]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[12]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[12]->Fill(dPhi_PhoMET,wt);
+    h_St[12]->Fill(ST,wt);
+    h_HT[12]->Fill(Ht,wt);
+    h_njets_vs_ST[12]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[12]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[12]->Fill(ST,bestPhoton.Pt(),wt);
+
+    if(bestPhoton.Pt()>100)
+      h_selectBaselineYields_->Fill("Pho-pT>100",wt);
+    else
+      continue;
+
+    int Sbin_met100=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);
+    h_Sbins_v6_withOnlyBL_Selec_Met100->Fill(Sbin_met100,wt);
+    h_Njets[13]->Fill(nHadJets,wt);
+    h_Nbjets[13]->Fill(BTags,wt);
+    h_MET_[13]->Fill(MET,wt);
+    h_PhotonPt[13]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[13]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[13]->Fill(dPhi_PhoMET,wt);
+    h_St[13]->Fill(ST,wt);
+    h_HT[13]->Fill(Ht,wt);
+    h_njets_vs_ST[13]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[13]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[13]->Fill(ST,bestPhoton.Pt(),wt);
+
+    // int Sbin=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);                                                                                    
+    // h_Sbins_v6_withOnlyBL_Selec->Fill(Sbin,wt);
 
     if (k > decade)
       cout << 10 * k << " %-5" << endl;
 
-    // if (MET>250)
-    //   h_selectBaselineYields_->Fill("MET>250",wt);
+    // if (bestPhoton.Pt()>=30)
+    //   h_selectBaselineYields_->Fill("pho-pT>30",wt);
     // else continue;
-    h_selectBaselineYields_->Fill("Final",wt);
-    h_Njets[9]->Fill(nHadJets,wt);
-    h_Nbjets[9]->Fill(BTags,wt);
-    h_MET_[9]->Fill(MET,wt);
-    h_PhotonPt[9]->Fill(bestPhoton.Pt(),wt);
-    h_Mt_PhoMET[9]->Fill(mTPhoMET,wt);
-    h_dPhi_PhoMET[9]->Fill(dPhi_PhoMET,wt);
-    h_St[9]->Fill(ST,wt);
-    h_HT[9]->Fill(Ht,wt);
-    h_njets_vs_ST[9]->Fill(nHadJets,ST,wt);
-    h_njets_vs_HT[9]->Fill(nHadJets,Ht,wt);
-    h_ST_vs_ptPho[9]->Fill(ST,bestPhoton.Pt(),wt);
+        h_selectBaselineYields_->Fill("Final",wt);
     
     bool process= false;
     
 
-// if(!bestPhoHasPxlSeed && bestPhoton.Pt()>=30 && ST>300 && nHadJets>=2 && MET > 250 && dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3 && NElectrons==0 && NMuons==0 &&((isoElectronTracks==0)&&(isoMuonTracks==0)&&(isoPionTracks==0)))
-    //   process =true;
-    // else continue;
+if(!bestPhoHasPxlSeed && bestPhoton.Pt()>=100 && ST>300 && nHadJets>=2 && MET > 250 && dPhi_METjet1 > 0.3 && dPhi_METjet2 > 0.3 && NElectrons==0 && NMuons==0 &&((isoElectronTracks==0)&&(isoMuonTracks==0)&&(isoPionTracks==0)))
+  process =true;
+ else continue;
     h_selectBaselineYields_->Fill("final",wt);
+    h_Njets[14]->Fill(nHadJets,wt);
+    h_Nbjets[14]->Fill(BTags,wt);
+    h_MET_[14]->Fill(MET,wt);
+    h_PhotonPt[14]->Fill(bestPhoton.Pt(),wt);
+    h_Mt_PhoMET[14]->Fill(mTPhoMET,wt);
+    h_dPhi_PhoMET[14]->Fill(dPhi_PhoMET,wt);
+    h_St[14]->Fill(ST,wt);
+    h_HT[14]->Fill(Ht,wt);
+    h_njets_vs_ST[14]->Fill(nHadJets,ST,wt);
+    h_njets_vs_HT[14]->Fill(nHadJets,Ht,wt);
+    h_ST_vs_ptPho[14]->Fill(ST,bestPhoton.Pt(),wt);
 
 
     nSurvived++;
-    h_selectBaselineYields_->Fill("survived",wt);
-    int Sbin_prev=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);                                                                                                            
+    int Sbin_prev=getBinNoV6_WithOnlyBLSelec(BTags,nHadJets);                                                              
     h_Sbins_v6_withOnlyBL_Selec_PrevAna->Fill(Sbin_prev,wt);    
+
     if(Debug)
       cout<<"filling the branches in tree"<<endl;
 
